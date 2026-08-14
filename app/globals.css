@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #f2f2f2;
+  --bg-strong: #e8e8e8;
+  --surface: rgba(255, 255, 255, 0.98);
+  --surface-strong: #ffffff;
+  --surface-muted: #f6f6f6;
+  --text: #111111;
+  --text-soft: #666666;
+  --border: rgba(17, 17, 17, 0.12);
+  --accent: #2f80ed;
+  --accent-contrast: #ffffff;
+}
+
+html[data-theme="dark"] {
+  --bg: #080808;
+  --bg-strong: #111111;
+  --surface: rgba(18, 18, 18, 0.98);
+  --surface-strong: #161616;
+  --surface-muted: #101010;
+  --text: #f5f5f5;
+  --text-soft: #b0b0b0;
+  --border: rgba(255, 255, 255, 0.16);
+  --accent: #58a6ff;
+  --accent-contrast: #081018;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--bg), var(--bg-strong));
+  color: var(--text);
+  font-family: "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+textarea,
+input,
+button {
+  font: inherit;
+}
+
+.glass-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(10px);
+}
+
+.control-chip {
+  @apply rounded-md border px-3 py-2 text-sm font-medium transition;
+  border-color: var(--border);
+  background: var(--surface-strong);
+}
+
+.section-kicker {
+  @apply text-[11px] font-semibold uppercase tracking-[0.22em];
+  color: var(--text-soft);
+}
+
+.teleprompter-text {
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.6;
+}
+
+.mirror-text {
+  transform: scaleX(-1);
+  transform-origin: center;
+}
