@@ -87,6 +87,8 @@ Set these server-only variables in your local `.env.local` or deployment secret 
 
 ```env
 AUTH_SECRET=generate-a-long-random-value
+NEXTAUTH_SECRET=the-same-long-random-value
+NEXTAUTH_URL=https://www.freeteleprompter.in
 AUTH_GOOGLE_ID=your-google-client-id
 AUTH_GOOGLE_SECRET=your-rotated-google-client-secret
 MONGODB_URI=your-mongodb-connection-string
