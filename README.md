@@ -26,6 +26,7 @@ Production-ready Next.js teleprompter starter for `https://www.freeteleprompter.
 - `isPremium` flag and feature gating structure
 - Ad placeholder for free users
 - Google sign-in entry point and MongoDB-backed user/script/payment collections
+- Protected administrator login at `/admin/login` with a MongoDB-backed stats dashboard
 - Video + audio recording tied to teleprompter playback
 - Download gate with a ₹99/month payment QR flow
 - SEO-ready metadata, structured data, sitemap, robots, and manifest routes
@@ -79,6 +80,67 @@ npm run dev
 3. Open [http://localhost:3000](http://localhost:3000)
 
 4. Add environment variables from `.env.example` before using Google sign-in, MongoDB persistence, or payment QR flows.
+
+### OAuth and admin setup
+
+Set these server-only variables in your local `.env.local` or deployment secret manager:
+
+```env
+AUTH_SECRET=generate-a-long-random-value
+AUTH_GOOGLE_ID=your-google-client-id
+AUTH_GOOGLE_SECRET=your-rotated-google-client-secret
+MONGODB_URI=your-mongodb-connection-string
+MONGODB_DB=freeteleprompter
+ADMIN_USERNAME=your-private-admin-username
+ADMIN_PASSWORD_HASH=your-generated-scrypt-value
+RAZORPAY_KEY_ID=your-razorpay-key-id
+RAZORPAY_KEY_SECRET=your-server-only-razorpay-secret
+RAZORPAY_PLAN_ID=your-razorpay-monthly-plan-id
+RAZORPAY_TOTAL_COUNT=12
+RAZORPAY_WEBHOOK_SECRET=your-server-only-razorpay-webhook-secret
+```
+
+Generate the password hash without putting the password in source control:
+
+```bash
+node -e 'const c=require("node:crypto");const s=c.randomBytes(16).toString("hex");console.log(`${s}:${c.scryptSync(process.argv[1],s,64).toString("hex")}`)' 'choose-a-new-admin-password'
+```
+
+The admin dashboard is available at `/admin`, with login at `/admin/login`. It is protected by a server-side NextAuth
+session, marked `noindex`, and disallowed in `robots.txt`. The dashboard reports registered users and users active within
+the last 15 minutes based on authenticated browser heartbeats.
+
+For Google OAuth, configure these authorized redirect URIs in Google Cloud Console:
+
+```text
+http://localhost:3000/api/auth/callback/google
+http://localhost:3001/api/auth/callback/google
+https://freeteleprompter.in/api/auth/callback/google
+https://www.freeteleprompter.in/api/auth/callback/google
+```
+
+Also add both local origins under **Authorized JavaScript origins**:
+
+```text
+http://localhost:3000
+http://localhost:3001
+```
+
+The redirect URI must match the port in the browser exactly. If the app is open at `http://localhost:3001`, authorize
+`http://localhost:3001/api/auth/callback/google`; if it is open at `http://localhost:3000`, authorize the `3000` version.
+
+The client secret included in the request should be rotated in Google Cloud Console because it has been exposed. Never
+place `AUTH_GOOGLE_SECRET`, `AUTH_SECRET`, or `ADMIN_PASSWORD_HASH` in client-side code or `NEXT_PUBLIC_*` variables.
+
+### Automatic downloads and billing
+
+Authenticated users receive their first three media downloads free. Each download is authorized and counted atomically
+by the server. After the allowance is exhausted, Razorpay Checkout opens a recurring ₹49/month subscription. Create a
+monthly Razorpay Plan, set its ID as `RAZORPAY_PLAN_ID`, and configure the Razorpay webhook/checkout credentials in the
+server environment. The browser never receives `RAZORPAY_KEY_SECRET`.
+
+Point the Razorpay webhook to `/api/webhooks/razorpay` and subscribe to subscription activation, charge, cancellation,
+completion, and halt events.
 
 5. For production SEO and monetization, configure:
 

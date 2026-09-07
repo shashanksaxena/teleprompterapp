@@ -4,6 +4,8 @@ import { AdSenseLoader } from "@/components/adsense-loader";
 import { Analytics, GoogleTagManagerNoScript } from "@/components/analytics";
 import { AuthProvider } from "@/components/auth-provider";
 import { StructuredData } from "@/components/structured-data";
+import { SiteNavigation } from "@/components/site-navigation";
+import { ThemeSelector } from "@/components/theme-selector";
 import { ADSENSE_CLIENT } from "@/lib/adsense";
 import { getSiteUrl, siteConfig } from "@/lib/site";
 
@@ -79,10 +81,10 @@ export const metadata: Metadata = {
   },
   ...(ADSENSE_CLIENT
     ? {
-        other: {
-          "google-adsense-account": ADSENSE_CLIENT
-        }
+      other: {
+        "google-adsense-account": ADSENSE_CLIENT
       }
+    }
     : {})
 };
 
@@ -105,7 +107,11 @@ export default function RootLayout({
         <StructuredData />
         <AdSenseLoader client={ADSENSE_CLIENT} />
         <Analytics gaId={GA_MEASUREMENT_ID} gtmId={GTM_ID} />
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <SiteNavigation />
+          <ThemeSelector />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

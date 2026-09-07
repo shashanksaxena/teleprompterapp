@@ -69,12 +69,12 @@ export function ControlBar({
       }
     >
       <div className="flex flex-col gap-3">
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-nowrap items-center gap-2 overflow-x-auto pb-1">
           <button
             type="button"
             onMouseDown={pressAction(handleTogglePlay)}
             onTouchStart={pressAction(handleTogglePlay)}
-            className="inline-flex items-center gap-2 rounded-md bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-[var(--accent-contrast)] transition hover:opacity-90"
+            className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl bg-[var(--accent)] px-3.5 py-2 text-sm font-semibold text-[var(--accent-contrast)] shadow-[0_14px_28px_rgba(59,130,246,0.24)] transition hover:opacity-95 active:scale-[0.99]"
           >
             {metrics.isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
             {metrics.isPlaying ? "Pause" : "Play"}
@@ -84,7 +84,7 @@ export function ControlBar({
             type="button"
             onMouseDown={pressAction(handleStop)}
             onTouchStart={pressAction(handleStop)}
-            className="control-chip inline-flex items-center gap-2"
+            className="control-chip inline-flex shrink-0 items-center gap-2 whitespace-nowrap px-3 py-2"
           >
             <Square className="h-4 w-4" />
             Stop
@@ -95,7 +95,7 @@ export function ControlBar({
               type="button"
               onMouseDown={pressAction(() => runOnce(onRestart))}
               onTouchStart={pressAction(() => runOnce(onRestart))}
-              className="control-chip inline-flex items-center gap-2"
+              className="control-chip inline-flex shrink-0 items-center gap-2 whitespace-nowrap px-3 py-2"
             >
               <RotateCcw className="h-4 w-4" />
               Restart
@@ -106,7 +106,7 @@ export function ControlBar({
             type="button"
             onMouseDown={pressAction(handleToggleVoice)}
             onTouchStart={pressAction(handleToggleVoice)}
-            className="control-chip inline-flex items-center gap-2"
+            className="control-chip inline-flex shrink-0 items-center gap-2 whitespace-nowrap px-3 py-2"
           >
             <Mic className="h-4 w-4" />
             {metrics.voiceEnabled ? "Voice on" : "Voice scroll"}
@@ -117,7 +117,7 @@ export function ControlBar({
             onMouseDown={pressAction(handleDownload)}
             onTouchStart={pressAction(handleDownload)}
             disabled={!canDownload}
-            className="control-chip inline-flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className="control-chip inline-flex shrink-0 items-center gap-2 whitespace-nowrap px-3 py-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Download className="h-4 w-4" />
             Download reel

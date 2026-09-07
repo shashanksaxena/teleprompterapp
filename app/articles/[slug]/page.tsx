@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { articles, getArticle } from "@/lib/articles";
+import { completeArticles, getArticle } from "@/lib/articles";
 import { getSiteUrl, siteConfig } from "@/lib/site";
 
 type ArticlePageProps = {
@@ -13,7 +13,7 @@ type ArticlePageProps = {
 };
 
 export function generateStaticParams() {
-  return articles.map((article) => ({
+  return completeArticles.map((article) => ({
     slug: article.slug
   }));
 }

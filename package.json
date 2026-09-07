@@ -10,7 +10,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@breezystack/lamejs": "^1.2.7",
+    "@ffmpeg/ffmpeg": "^0.12.15",
+    "@ffmpeg/util": "^0.12.2",
     "clsx": "^2.1.1",
+    "lamejs": "^1.2.1",
     "lucide-react": "^0.511.0",
     "mongodb": "^7.2.0",
     "next": "^15.5.15",

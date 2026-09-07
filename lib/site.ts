@@ -5,10 +5,10 @@ export const siteConfig = {
   author: "Shashank Saxena",
   supportEmail: "shashanksaxena18@gmail.com",
   country: "India",
-  title: "Free Online Teleprompter for Video Recording, Voice Scroll and Script Saving",
+  title: "Free Online Teleprompter for Videos and YouTube",
   titleTemplate: "%s | FreeTeleprompter.in",
   description:
-    "Use a free online teleprompter with smooth scrolling, mirror mode, video recording, voice-assisted pacing, saved scripts, and a mobile-friendly teleprompter screen for reels, YouTube videos, classes, and presentations.",
+    "Use a free online teleprompter for YouTube, webcam videos, presentations, phone recording, and voice-controlled scrolling directly in your browser.",
   keywords: [
     "free teleprompter online",
     "online teleprompter",
@@ -22,7 +22,15 @@ export const siteConfig = {
     "reel teleprompter",
     "teleprompter for reels",
     "teleprompter for youtube videos",
-    "browser teleprompter"
+    "browser teleprompter",
+    "teleprompter online",
+    "free teleprompter",
+    "free teleprompter for videos",
+    "teleprompter for webcam",
+    "teleprompter for phone",
+    "teleprompter with voice control",
+    "teleprompter for video recording",
+    "teleprompter for presentations"
   ],
   ogImage: "/opengraph-image"
 } as const;

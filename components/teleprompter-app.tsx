@@ -34,6 +34,7 @@ export function TeleprompterApp() {
   const [isStageMode, setIsStageMode] = useState(false);
   const [stageHasStarted, setStageHasStarted] = useState(false);
   const [pendingDownload, setPendingDownload] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
   const adsenseClient = ADSENSE_CLIENT;
   const adsenseSlotBottom = ADSENSE_SLOT_BOTTOM;
@@ -114,6 +115,13 @@ export function TeleprompterApp() {
       const nextUrl = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ""}`;
       window.history.replaceState({}, "", nextUrl);
     }
+    if (params.get("payment") === "success" && status === "authenticated") {
+      setPremiumUnlocked(true);
+      setPendingDownload(true);
+      params.delete("payment");
+      const nextUrl = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ""}`;
+      window.history.replaceState({}, "", nextUrl);
+    }
   }, [status]);
 
   const handleSettingsChange = (patch: Partial<AppSettings>) => {
@@ -158,6 +166,18 @@ export function TeleprompterApp() {
       ...patch
     });
   };
+
+  useEffect(() => {
+    const handleThemeChange = (event: Event) => {
+      const nextTheme = (event as CustomEvent<AppSettings["theme"]>).detail;
+      if (nextTheme === "light" || nextTheme === "dark") {
+        handleSettingsChange({ theme: nextTheme });
+      }
+    };
+
+    window.addEventListener("teleprompter:theme-change", handleThemeChange);
+    return () => window.removeEventListener("teleprompter:theme-change", handleThemeChange);
+  }, [handleSettingsChange]);
 
   const handleSaveScript = () => {
     const content = draftStore.value.trim();
@@ -327,7 +347,37 @@ export function TeleprompterApp() {
     trackEvent("restart_teleprompter");
   };
 
-  const handleDownload = () => {
+  const authorizeDownload = async () => {
+    setDownloadError(null);
+
+    if (status !== "authenticated") {
+      setDownloadModalOpen(true);
+      return false;
+    }
+
+    try {
+      const response = await fetch("/api/download/authorize", { method: "POST" });
+      if (response.ok) {
+        return true;
+      }
+
+      if (response.status === 402) {
+        window.location.assign(`/payment?returnTo=${encodeURIComponent(window.location.pathname)}`);
+        trackEvent("open_download_paywall", {
+          authenticated: true
+        });
+      } else {
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        setDownloadError(payload?.error || "Download authorization failed. Please sign in again and retry.");
+      }
+    } catch {
+      setDownloadError("Download authorization could not reach the server. Please retry.");
+    }
+
+    return false;
+  };
+
+  const handleDownload = async () => {
     if (!recorder.recordingBlob && recorder.isRecording) {
       setPendingDownload(true);
       recorder.stop();
@@ -340,16 +390,28 @@ export function TeleprompterApp() {
       return;
     }
 
-    if (!activePlan.isPremium) {
-      setDownloadModalOpen(true);
-      trackEvent("open_download_paywall", {
-        authenticated: status === "authenticated"
-      });
+    if (!(await authorizeDownload())) {
       return;
     }
 
-    downloadBlob(recorder.recordingBlob, `freeteleprompter-reel-${Date.now()}.webm`);
+    const extension = recorder.recordingBlob.type.includes("mp4") ? "mp4" : "webm";
+    downloadBlob(recorder.recordingBlob, `freeteleprompter-reel-${Date.now()}.${extension}`);
     trackEvent("download_reel", {
+      plan: activePlan.name.toLowerCase()
+    });
+  };
+
+  const handleDownloadAudio = async () => {
+    if (!recorder.audioBlob) {
+      return;
+    }
+
+    if (!(await authorizeDownload())) {
+      return;
+    }
+
+    downloadBlob(recorder.audioBlob, `freeteleprompter-camera-off-${Date.now()}.mp3`);
+    trackEvent("download_audio_track", {
       plan: activePlan.name.toLowerCase()
     });
   };
@@ -360,7 +422,7 @@ export function TeleprompterApp() {
     }
 
     setPendingDownload(false);
-    handleDownload();
+    void handleDownload();
   }, [pendingDownload, recorder.recordingBlob]);
 
   const handleToggleVoice = () => {
@@ -452,27 +514,22 @@ export function TeleprompterApp() {
         />
       ) : null}
 
-      <AppHeader plan={activePlan} />
+      <AppHeader plan={activePlan} compact />
 
-      <div className="space-y-5">
-        <ScriptEditor
-          script={draftStore.value}
-          onScriptChange={draftStore.setValue}
-          onSaveScript={handleSaveScript}
-          saveDisabled={!draftStore.value.trim() || (status === "authenticated" && !canSaveMore)}
-          saveLabel={status === "authenticated" ? "Save script" : "Sign in to save"}
-          onClearScript={handleClearScript}
-          onLoadDemoScript={handleLoadDemoScript}
-        />
-
+      <div id="app-tools" className="space-y-5">
+        {downloadError ? (
+          <div className="rounded-[12px] border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-600">
+            {downloadError}
+          </div>
+        ) : null}
         {!isStageMode ? (
           <section className="glass-panel rounded-[18px] p-4 md:p-5">
-            <div className="grid gap-4 xl:grid-cols-[1.1fr_1fr]">
+            <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
               <div>
                 <p className="section-kicker mb-3">Session controls</p>
                 <ControlBar
                   embedded
-                  className="rounded-[14px] border border-[var(--border)] bg-[var(--surface-strong)] p-3"
+                  className="rounded-[14px] border border-[var(--border)] bg-[var(--surface-strong)] p-2.5"
                   metrics={metrics}
                   onTogglePlay={handleTogglePlayback}
                   onStop={handleStop}
@@ -495,6 +552,16 @@ export function TeleprompterApp() {
           </section>
         ) : null}
 
+        <ScriptEditor
+          script={draftStore.value}
+          onScriptChange={draftStore.setValue}
+          onSaveScript={handleSaveScript}
+          saveDisabled={!draftStore.value.trim() || (status === "authenticated" && !canSaveMore)}
+          saveLabel={status === "authenticated" ? "Save script" : "Sign in to save"}
+          onClearScript={handleClearScript}
+          onLoadDemoScript={handleLoadDemoScript}
+        />
+
         <div className="grid gap-4 lg:grid-cols-2">
           <SavedScriptsPanel
             isAuthenticated={status === "authenticated"}
@@ -507,10 +574,12 @@ export function TeleprompterApp() {
           <RecordingPanel
             liveStream={recorder.liveStream}
             recordingUrl={recorder.recordingUrl}
+            audioUrl={recorder.audioUrl}
             isRecording={recorder.isRecording}
             recordingDurationSeconds={recorder.recordingDurationSeconds}
             isPremium={activePlan.isPremium}
             onDownload={handleDownload}
+            onDownloadAudio={handleDownloadAudio}
           />
         </div>
       </div>

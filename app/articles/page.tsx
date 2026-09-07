@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
-import { articles } from "@/lib/articles";
+import { completeArticles } from "@/lib/articles";
 import { createPageMetadata } from "@/lib/page-metadata";
 
 export const metadata: Metadata = createPageMetadata({
@@ -45,7 +45,7 @@ export default function ArticlesPage() {
       </header>
 
       <section className="grid gap-4 md:grid-cols-2">
-        {articles.map((article) => (
+        {completeArticles.map((article) => (
           <Link
             key={article.slug}
             href={`/articles/${article.slug}`}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Camera, Maximize2, Minimize2, MoonStar, MoveHorizontal, SunMedium } from "lucide-react";
+import { Camera, Maximize2, Minimize2, MoveHorizontal } from "lucide-react";
 
 import { AppSettings } from "@/lib/types";
 
@@ -21,32 +21,9 @@ export function SettingsPanel({
     <section className={embedded ? "rounded-[14px] border border-[var(--border)] bg-[var(--surface-strong)] p-3 md:p-4" : "glass-panel rounded-[16px] p-3 md:p-4"}>
       <div className="mb-3 flex items-center justify-between gap-3">
         <h2 className="section-kicker">Prompt controls</h2>
-
-        <div className="inline-flex rounded-md border border-[var(--border)] bg-[var(--surface-strong)] p-1">
-          <button
-            type="button"
-            onClick={() => onSettingsChange({ theme: "light" })}
-            className={`inline-flex items-center gap-2 rounded px-3 py-1.5 text-sm ${
-              settings.theme === "light" ? "bg-[var(--accent)] text-[var(--accent-contrast)]" : "text-[var(--text-soft)]"
-            }`}
-          >
-            <SunMedium className="h-4 w-4" />
-            Light
-          </button>
-          <button
-            type="button"
-            onClick={() => onSettingsChange({ theme: "dark" })}
-            className={`inline-flex items-center gap-2 rounded px-3 py-1.5 text-sm ${
-              settings.theme === "dark" ? "bg-[var(--accent)] text-[var(--accent-contrast)]" : "text-[var(--text-soft)]"
-            }`}
-          >
-            <MoonStar className="h-4 w-4" />
-            Dark
-          </button>
-        </div>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[1fr_1fr_auto_auto_auto] xl:items-end">
+      <div className="grid gap-3 xl:grid-cols-[minmax(120px,1fr)_minmax(120px,1fr)_auto_auto_auto] xl:items-end">
         <label className="block">
           <div className="mb-2 flex items-center justify-between text-sm">
             <span>Speed</span>
@@ -82,7 +59,7 @@ export function SettingsPanel({
         <button
           type="button"
           onClick={() => onSettingsChange({ mirrorMode: !settings.mirrorMode })}
-          className="control-chip flex items-center justify-center gap-2"
+          className="control-chip flex items-center justify-center gap-2 whitespace-nowrap px-3"
         >
           <MoveHorizontal className="h-4 w-4" />
           {settings.mirrorMode ? "Mirror on" : "Mirror"}
@@ -90,7 +67,7 @@ export function SettingsPanel({
         <button
           type="button"
           onClick={() => onSettingsChange({ mirrorCamera: !settings.mirrorCamera })}
-          className="control-chip flex items-center justify-center gap-2"
+          className="control-chip flex items-center justify-center gap-2 whitespace-nowrap px-3"
         >
           <Camera className="h-4 w-4" />
           {settings.mirrorCamera ? "Camera mirror" : "Camera normal"}
@@ -98,7 +75,7 @@ export function SettingsPanel({
         <button
           type="button"
           onClick={onToggleFullscreen}
-          className="control-chip flex items-center justify-center gap-2"
+          className="control-chip flex items-center justify-center gap-2 whitespace-nowrap px-3"
         >
           {settings.isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
           {settings.isFullscreen ? "Exit" : "Fullscreen"}

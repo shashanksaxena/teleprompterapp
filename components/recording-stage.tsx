@@ -156,8 +156,8 @@ export function RecordingStage({
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/65">Ready to prompt</p>
             <h2 className="mt-3 text-2xl font-semibold">Frame your shot, set the speed, then begin.</h2>
             <p className="mt-3 text-sm leading-6 text-white/75">
-              The camera is live. Use the controls above to mirror the camera or fine-tune the scroll speed before the
-              script starts moving.
+              Camera access is optional. Use the controls above to fine-tune the speed and layout before the script
+              begins moving.
             </p>
             <button
               type="button"

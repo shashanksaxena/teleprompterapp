@@ -1056,6 +1056,89 @@ export const articles: Article[] = [
   }
 ];
 
+const additionalArticleTopics = [
+  ["teleprompter-without-looking-like-reading", "How to Use a Teleprompter Without Looking Like You Are Reading", "Learn practical eye-line, text placement, pacing, and script formatting techniques for natural teleprompter delivery.", ["teleprompter without looking like reading", "natural teleprompter delivery"]],
+  ["best-teleprompter-settings-youtube", "Best Teleprompter Settings for YouTube Videos", "Choose practical font size, scroll speed, text width, and camera placement settings for YouTube recording.", ["best teleprompter settings YouTube", "YouTube teleprompter speed"]],
+  ["diy-teleprompter-guide", "DIY Teleprompter Guide: Build a Simple Setup at Home", "Build an affordable DIY teleprompter setup with a phone or laptop, reflective glass, and simple camera positioning.", ["DIY teleprompter", "homemade teleprompter setup"]],
+  ["teleprompter-vs-memorizing-script", "Teleprompter vs Memorizing a Script: Which Is Better?", "Compare teleprompter reading and memorization for YouTube, presentations, lessons, and short-form videos.", ["teleprompter vs memorizing", "should I use a teleprompter"]],
+  ["read-teleprompter-naturally", "How to Read a Teleprompter Naturally", "Improve delivery with conversational writing, deliberate pauses, recovery points, and camera-friendly eye contact.", ["how to read a teleprompter naturally", "natural teleprompter reading"]],
+  ["free-teleprompter-youtube-videos", "Free Teleprompter for YouTube Videos: A Practical Workflow", "Use a free browser teleprompter to outline, rehearse, record, and review YouTube videos without installing software.", ["free teleprompter YouTube", "YouTube video teleprompter"]],
+  ["use-laptop-as-teleprompter", "How to Use Your Laptop as a Teleprompter", "Turn a laptop into a readable teleprompter for webcam videos, online lessons, meetings, and presentations.", ["use laptop as teleprompter", "laptop teleprompter"]],
+  ["teleprompter-presentation-tips", "Teleprompter Tips for Presentations and Public Speaking", "Prepare presentation prompts that support confidence, eye contact, timing, and audience connection.", ["teleprompter presentation tips", "presentation teleprompter"]],
+  ["teleprompter-for-webcam", "Teleprompter for Webcam Videos: Setup and Recording Tips", "Position a browser teleprompter beside your webcam and choose settings that keep your eyes close to the lens.", ["teleprompter for webcam", "webcam teleprompter"]],
+  ["teleprompter-for-video-recording", "Teleprompter for Video Recording: From Script to Final Take", "Follow a repeatable workflow for script preparation, camera setup, rehearsal, recording, and review.", ["teleprompter for video recording", "video recording teleprompter"]],
+  ["teleprompter-for-zoom-meetings", "How to Use a Teleprompter for Zoom Meetings", "Keep meeting talking points visible while preserving natural eye contact and space for conversation.", ["teleprompter for Zoom", "Zoom teleprompter"]],
+  ["teleprompter-for-live-streaming", "Teleprompter Tips for Live Streaming", "Prepare live-stream cues, transitions, disclaimers, and audience prompts without losing a conversational tone.", ["teleprompter for live streaming", "livestream script"]],
+  ["teleprompter-script-length", "How Long Should a Teleprompter Script Be?", "Estimate spoken word counts for reels, YouTube videos, lessons, webinars, and presentations.", ["teleprompter script length", "words per minute teleprompter"]],
+  ["teleprompter-speaking-speed", "Speaking Speed and Teleprompter Scroll Speed Explained", "Match scroll speed to your real speaking pace and adjust for pauses, emphasis, and technical explanations.", ["teleprompter speaking speed", "teleprompter scroll speed"]],
+  ["teleprompter-camera-placement", "Where Should a Teleprompter Go Relative to the Camera?", "Solve eye-line problems by placing the prompt near the lens and matching screen height to your recording position.", ["teleprompter camera placement", "teleprompter eye line"]],
+  ["teleprompter-for-mac", "Teleprompter for Mac: Browser Setup and Recording Tips", "Use a MacBook or Mac desktop as a teleprompter with readable settings, webcam placement, and privacy controls.", ["teleprompter for Mac", "Mac teleprompter"]],
+  ["teleprompter-for-windows", "Teleprompter for Windows: A Browser-Based Setup", "Set up a Windows laptop or desktop as a teleprompter for webcam recording, teaching, and presentations.", ["teleprompter for Windows", "Windows teleprompter"]],
+  ["teleprompter-for-online-courses", "Teleprompter for Online Courses: Script and Lesson Planning", "Create clear course videos with lesson cues, examples, recap points, and natural teaching transitions.", ["teleprompter for online courses", "course video teleprompter"]],
+  ["teleprompter-for-business-presentations", "Teleprompter for Business Presentations and Product Demos", "Use concise prompts for business presentations, product demos, stakeholder updates, and sales videos.", ["business presentation teleprompter", "product demo teleprompter"]],
+  ["teleprompter-privacy-camera-permissions", "Teleprompter Privacy: Camera Permissions, Local Drafts, and Recording", "Understand camera permissions, local drafts, microphone access, and privacy choices when using a browser teleprompter.", ["teleprompter privacy", "camera permission teleprompter"]]
+] as const;
+
+const additionalArticles: Article[] = additionalArticleTopics.map(([slug, title, description, keywords]) => ({
+  slug,
+  title,
+  description,
+  datePublished: "2026-09-08",
+  dateModified: "2026-09-08",
+  readingTime: "6 min read",
+  image: "/articles/youtube-teleprompter-setup.png",
+  imageAlt: `${title} guide for online video recording`,
+  keywords: [...keywords],
+  intro: description,
+  sections: [
+    {
+      heading: "Start with a script designed for speaking",
+      paragraphs: [
+        "A teleprompter works best with short speaking blocks rather than dense paragraphs. Write one idea per block, add headings for major transitions, and leave space where you naturally breathe or pause.",
+        "Read the draft aloud before recording. Rewrite sentences that feel formal, complicated, or unlike the way you normally explain the idea to another person."
+      ]
+    },
+    {
+      heading: "Tune the setup with a short test",
+      paragraphs: [
+        "Place the prompt as close to the camera lens as possible, choose a font size you can read without squinting, and begin with a slower scroll speed than your silent reading pace.",
+        "Record a short test and change one setting at a time. Review eye-line, audio, pacing, and the first sentence before recording the full take."
+      ]
+    },
+    {
+      heading: "Keep the delivery useful and natural",
+      paragraphs: [
+        "Use the prompt as a support system, not a reason to read every word mechanically. Look at the lens between short lines, emphasize important phrases, and allow the audience time to follow your point.",
+        "If you lose your place, pause and continue from the next heading. A calm recovery is less distracting than speeding up to catch the text."
+      ]
+    }
+  ],
+  checklist: [
+    "Break the script into short speaking blocks.",
+    "Put the prompt close to the camera.",
+    "Start with a slower scroll speed.",
+    "Record a short test before the final take.",
+    "Review the opening, eye-line, and audio."
+  ],
+  faqs: [
+    {
+      question: "Can I use a browser teleprompter without installing an app?",
+      answer: "Yes. FreeTeleprompter.in works in a modern browser and supports script editing, scrolling, mirror mode, optional voice scroll, and recording workflows."
+    },
+    {
+      question: "Do I need camera permission to read a script?",
+      answer: "No. Camera access is optional. You can write, rehearse, and read the prompt without enabling the camera."
+    }
+  ],
+  related: [
+    { href: "/teleprompter-app", label: "Open the teleprompter" },
+    { href: "/how-to-use", label: "How to use the tool" },
+    { href: "/articles", label: "More teleprompter articles" }
+  ]
+}));
+
+export const completeArticles = [...articles, ...additionalArticles];
+
 export function getArticle(slug: string) {
-  return articles.find((article) => article.slug === slug);
+  return completeArticles.find((article) => article.slug === slug);
 }

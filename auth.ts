@@ -1,6 +1,8 @@
 import type { NextAuthOptions } from "next-auth";
 import type { ObjectId } from "mongodb";
+import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 
 import { getTeleprompterCollection } from "@/lib/mongodb";
 
@@ -10,6 +12,34 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_ID ?? "",
       clientSecret: process.env.AUTH_GOOGLE_SECRET ?? ""
+    }),
+    CredentialsProvider({
+      id: "admin-credentials",
+      name: "Admin login",
+      credentials: {
+        username: { label: "Username", type: "text" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        const username = credentials?.username;
+        const password = credentials?.password;
+        const expectedUsername = process.env.ADMIN_USERNAME;
+        const passwordHash = process.env.ADMIN_PASSWORD_HASH;
+
+        if (!username || !password || !expectedUsername || !passwordHash || username !== expectedUsername) {
+          return null;
+        }
+
+        const [salt, storedHash] = passwordHash.split(":");
+        if (!salt || !storedHash) {
+          return null;
+        }
+
+        const derivedHash = scryptSync(password, salt, 64).toString("hex");
+        const matches = timingSafeEqual(Buffer.from(derivedHash, "hex"), Buffer.from(storedHash, "hex"));
+
+        return matches ? { id: "admin", name: "Administrator", email: "admin@localhost", isAdmin: true } : null;
+      }
     })
   ],
   session: {
@@ -17,6 +47,10 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user }) {
+      if (user.isAdmin) {
+        return true;
+      }
+
       if (!user.email) {
         return false;
       }
@@ -32,6 +66,7 @@ export const authOptions: NextAuthOptions = {
               email: user.email,
               name: user.name ?? "Creator",
               image: user.image ?? null,
+              lastSeenAt: new Date().toISOString(),
               updatedAt: new Date().toISOString()
             },
             $setOnInsert: {
@@ -54,6 +89,17 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
     async jwt({ token, user }) {
+      if (user?.isAdmin) {
+        token.isAdmin = true;
+        token.userId = "admin";
+        token.name = "Administrator";
+        return token;
+      }
+
+      if (token.isAdmin) {
+        return token;
+      }
+
       const email = user?.email ?? token.email;
       if (!email) {
         return token;
@@ -65,11 +111,12 @@ export const authOptions: NextAuthOptions = {
           _id: ObjectId;
           name?: string;
           image?: string;
+          downloadCount?: number;
           plan?: { isPremium?: boolean; name?: string };
         }>({
-            kind: "user",
-            email
-          });
+          kind: "user",
+          email
+        });
 
         if (dbUser) {
           token.userId = dbUser._id.toString();
@@ -77,6 +124,7 @@ export const authOptions: NextAuthOptions = {
           token.picture = dbUser.image ?? token.picture;
           token.isPremium = Boolean(dbUser.plan?.isPremium);
           token.planName = dbUser.plan?.name ?? "Free";
+          token.freeDownloadsRemaining = Math.max(0, 3 - Number(dbUser.downloadCount ?? 0));
         }
       } catch (error) {
         console.warn("JWT session continuing without MongoDB lookup.", error);
@@ -89,6 +137,8 @@ export const authOptions: NextAuthOptions = {
         session.user.id = String(token.userId ?? "");
         session.user.isPremium = Boolean(token.isPremium);
         session.user.planName = String(token.planName ?? "Free");
+        session.user.isAdmin = Boolean(token.isAdmin);
+        session.user.freeDownloadsRemaining = Number(token.freeDownloadsRemaining ?? 0);
       }
 
       return session;

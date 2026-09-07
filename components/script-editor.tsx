@@ -36,7 +36,7 @@ export function ScriptEditor({
           <button
             type="button"
             onClick={onLoadDemoScript}
-            className="control-chip inline-flex items-center gap-2"
+            className="control-chip inline-flex items-center gap-2 px-3.5 py-2.5"
           >
             <RotateCcw className="h-4 w-4" />
             Load demo
@@ -44,7 +44,7 @@ export function ScriptEditor({
           <button
             type="button"
             onClick={onClearScript}
-            className="control-chip inline-flex items-center gap-2"
+            className="control-chip inline-flex items-center gap-2 px-3.5 py-2.5"
           >
             <Eraser className="h-4 w-4" />
             Clear
@@ -53,7 +53,7 @@ export function ScriptEditor({
             type="button"
             onClick={onSaveScript}
             disabled={saveDisabled}
-            className="inline-flex items-center gap-2 rounded-md bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-[var(--accent-contrast)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-[var(--accent-contrast)] shadow-[0_12px_30px_rgba(59,130,246,0.25)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Save className="h-4 w-4" />
             {saveLabel}

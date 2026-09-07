@@ -1,26 +1,30 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Camera, Circle, Download, Video } from "lucide-react";
+import { Camera, Circle, Download, Music2, Video } from "lucide-react";
 
 import { formatDuration } from "@/lib/utils";
 
 type RecordingPanelProps = {
   liveStream: MediaStream | null;
   recordingUrl: string | null;
+  audioUrl: string | null;
   isRecording: boolean;
   recordingDurationSeconds: number;
   isPremium: boolean;
   onDownload: () => void;
+  onDownloadAudio: () => void;
 };
 
 export function RecordingPanel({
   liveStream,
   recordingUrl,
+  audioUrl,
   isRecording,
   recordingDurationSeconds,
   isPremium,
-  onDownload
+  onDownload,
+  onDownloadAudio
 }: RecordingPanelProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -74,6 +78,26 @@ export function RecordingPanel({
           </div>
         )}
       </div>
+
+      {audioUrl ? (
+        <div className="mt-3 rounded-[10px] border border-[var(--border)] bg-[var(--surface-muted)] p-3">
+          <div className="mb-2 flex items-center gap-2 text-sm font-medium">
+            <Music2 className="h-4 w-4 text-[var(--accent)]" />
+            Camera-off audio track
+          </div>
+          <audio controls src={audioUrl} className="w-full" preload="metadata">
+            Your browser does not support audio playback.
+          </audio>
+          <button
+            type="button"
+            onClick={onDownloadAudio}
+            className="mt-3 inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] px-3 py-2 text-sm font-semibold transition hover:border-[var(--accent)]"
+          >
+            <Download className="h-4 w-4" />
+            Download MP3
+          </button>
+        </div>
+      ) : null}
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2 text-sm text-[var(--text-soft)]">

@@ -8,6 +8,7 @@ export const STORAGE_KEYS = {
 } as const;
 
 export const FREE_SCRIPT_LIMIT = 3;
+export const FREE_DOWNLOAD_LIMIT = 3;
 
 export const DEFAULT_SCRIPT = `Welcome to FreeTeleprompter.in.
 
@@ -22,7 +23,7 @@ Future-ready hooks are already prepared for AI script generation, AI speech feed
 export const DEFAULT_SETTINGS: AppSettings = {
   speed: 36,
   fontSize: 42,
-  theme: "dark",
+  theme: "light",
   mirrorMode: false,
   mirrorCamera: true,
   isFullscreen: false

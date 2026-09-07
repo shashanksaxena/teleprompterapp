@@ -37,8 +37,8 @@ export function ContentPage({
         <h1 className="mt-2 text-3xl font-semibold leading-tight md:text-4xl">{title}</h1>
         <p className="mt-3 max-w-3xl text-sm leading-7 text-[var(--text-soft)] md:text-base">{intro}</p>
         <div className="mt-4 flex flex-wrap gap-3 text-sm text-[var(--text-soft)]">
-          <Link href="/" className="underline-offset-4 hover:underline">
-            Back to teleprompter
+          <Link href="/teleprompter-app" className="underline-offset-4 hover:underline">
+            Open teleprompter
           </Link>
           <Link href="/how-to-use" className="underline-offset-4 hover:underline">
             How to use

@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb";
+import { randomBytes, scryptSync } from "node:crypto";
 
 const globalForMongo = globalThis as typeof globalThis & {
   mongoClientPromise?: Promise<MongoClient>;
@@ -20,6 +21,11 @@ export function getMongoClient() {
   }
 
   return globalForMongo.mongoClientPromise;
+}
+
+export function createAdminPasswordHash(password: string) {
+  const salt = randomBytes(16).toString("hex");
+  return `${salt}:${scryptSync(password, salt, 64).toString("hex")}`;
 }
 
 export async function getDb() {

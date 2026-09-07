@@ -1,13 +1,13 @@
 import type { MetadataRoute } from "next";
 
-import { articles } from "@/lib/articles";
+import { completeArticles } from "@/lib/articles";
 import { getSiteUrl } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const pageLastModified = new Date("2026-06-18");
-const policyLastModified = new Date("2026-06-18");
+const pageLastModified = new Date("2026-09-08");
+const policyLastModified = new Date("2026-09-08");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const siteUrl = getSiteUrl();
@@ -26,6 +26,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9
     },
     {
+      url: `${siteUrl}/free-teleprompter`,
+      lastModified: pageLastModified,
+      changeFrequency: "monthly",
+      priority: 0.9
+    },
+    {
       url: `${siteUrl}/ai-teleprompter`,
       lastModified: pageLastModified,
       changeFrequency: "monthly",
@@ -39,6 +45,30 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${siteUrl}/video-teleprompter`,
+      lastModified: pageLastModified,
+      changeFrequency: "monthly",
+      priority: 0.8
+    },
+    {
+      url: `${siteUrl}/teleprompter-for-webcam`,
+      lastModified: pageLastModified,
+      changeFrequency: "monthly",
+      priority: 0.9
+    },
+    {
+      url: `${siteUrl}/teleprompter-for-video-recording`,
+      lastModified: pageLastModified,
+      changeFrequency: "monthly",
+      priority: 0.9
+    },
+    {
+      url: `${siteUrl}/teleprompter-for-presentations`,
+      lastModified: pageLastModified,
+      changeFrequency: "monthly",
+      priority: 0.9
+    },
+    {
+      url: `${siteUrl}/teleprompter-for-phone`,
       lastModified: pageLastModified,
       changeFrequency: "monthly",
       priority: 0.8
@@ -133,7 +163,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.8
     },
-    ...articles.map((article) => ({
+    ...completeArticles.map((article) => ({
       url: `${siteUrl}/articles/${article.slug}`,
       lastModified: new Date(article.dateModified),
       changeFrequency: "monthly" as const,
