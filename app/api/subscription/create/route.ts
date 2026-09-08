@@ -29,7 +29,7 @@ export async function POST() {
             plan_id: planId,
             total_count: Number(process.env.RAZORPAY_TOTAL_COUNT || 12),
             quantity: 1,
-            customer_notify: 1,
+            customer_notify: true,
             notes: {
                 email: session.user.email,
                 product: "FreeTeleprompter.in monthly downloads"
