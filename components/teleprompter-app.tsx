@@ -471,7 +471,7 @@ export function TeleprompterApp() {
   );
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-[1180px] flex-col gap-5 px-4 py-5 sm:px-6 lg:px-8 xl:px-10">
+    <main className="mx-auto flex min-h-screen w-full min-w-0 max-w-[1180px] flex-col gap-5 overflow-x-hidden px-4 py-5 sm:px-6 lg:px-8 xl:px-10">
       {isStageMode ? (
         <RecordingStage
           stageRef={stageRef}
@@ -523,9 +523,9 @@ export function TeleprompterApp() {
           </div>
         ) : null}
         {!isStageMode ? (
-          <section className="glass-panel rounded-[18px] p-4 md:p-5">
-            <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
-              <div>
+          <section className="glass-panel min-w-0 overflow-hidden rounded-[18px] p-4 md:p-5">
+            <div className="grid min-w-0 gap-3 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+              <div className="min-w-0">
                 <p className="section-kicker mb-3">Session controls</p>
                 <ControlBar
                   embedded
@@ -540,7 +540,7 @@ export function TeleprompterApp() {
                 />
               </div>
 
-              <div>
+              <div className="min-w-0">
                 <SettingsPanel
                   embedded
                   settings={settingsStore.value}

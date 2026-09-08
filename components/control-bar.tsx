@@ -69,12 +69,12 @@ export function ControlBar({
       }
     >
       <div className="flex flex-col gap-3">
-        <div className="flex flex-nowrap items-center gap-2 overflow-x-auto pb-1">
+        <div className={embedded ? "flex flex-wrap items-center gap-2 pb-1" : "flex flex-nowrap items-center gap-2 overflow-x-auto pb-1"}>
           <button
             type="button"
             onMouseDown={pressAction(handleTogglePlay)}
             onTouchStart={pressAction(handleTogglePlay)}
-            className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl bg-[var(--accent)] px-3.5 py-2 text-sm font-semibold text-[var(--accent-contrast)] shadow-[0_14px_28px_rgba(59,130,246,0.24)] transition hover:opacity-95 active:scale-[0.99]"
+            className="inline-flex min-w-0 shrink-0 items-center gap-2 whitespace-nowrap rounded-xl bg-[var(--accent)] px-3.5 py-2 text-sm font-semibold text-[var(--accent-contrast)] shadow-[0_14px_28px_rgba(59,130,246,0.24)] transition hover:opacity-95 active:scale-[0.99]"
           >
             {metrics.isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
             {metrics.isPlaying ? "Pause" : "Play"}

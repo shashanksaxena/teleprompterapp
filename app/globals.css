@@ -566,3 +566,13 @@ html[data-theme="dark"] .cta-banner {
   transform: scaleX(-1);
   transform-origin: center;
 }
+
+.stage-video {
+  filter: brightness(0.82) contrast(1.08) saturate(1.08);
+}
+
+@media (max-width: 640px) {
+  .stage-video {
+    filter: brightness(0.78) contrast(1.12) saturate(1.1);
+  }
+}
