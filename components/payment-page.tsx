@@ -7,14 +7,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 type RazorpayOptions = {
     key: string;
-    subscription_id: string;
+    order_id: string;
     name: string;
     description: string;
-    handler: (response: {
-        razorpay_subscription_id: string;
-        razorpay_payment_id: string;
-        razorpay_signature: string;
-    }) => void;
+    handler: (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => void;
     prefill?: { name?: string | null; email?: string | null };
     theme?: { color: string };
     modal?: { ondismiss?: () => void };
@@ -50,19 +46,12 @@ export function PaymentPage() {
 
     const signInWithGoogle = async () => {
         setLoading(true);
-        setMessage(null);
-
-        const result = await signIn("google", {
-            callbackUrl: window.location.href,
-            redirect: false
-        });
-
+        const result = await signIn("google", { callbackUrl: window.location.href, redirect: false });
         if (!result?.url) {
             setMessage(result?.error || "Google sign-in could not start. Please refresh and try again.");
             setLoading(false);
             return;
         }
-
         window.location.assign(result.url);
     };
 
@@ -76,18 +65,18 @@ export function PaymentPage() {
         }
 
         const response = await fetch("/api/subscription/create", { method: "POST" });
-        const payload = (await response.json()) as { keyId?: string; subscriptionId?: string; error?: string };
-        if (!response.ok || !payload.keyId || !payload.subscriptionId) {
-            setMessage(payload.error || "Unable to start the subscription.");
+        const payload = (await response.json()) as { keyId?: string; orderId?: string; error?: string };
+        if (!response.ok || !payload.keyId || !payload.orderId) {
+            setMessage(payload.error || "Unable to start the payment.");
             setLoading(false);
             return;
         }
 
         const checkout = new window.Razorpay!({
             key: payload.keyId,
-            subscription_id: payload.subscriptionId,
+            order_id: payload.orderId,
             name: "FreeTeleprompter.in",
-            description: "Monthly teleprompter downloads",
+            description: "30 days of teleprompter downloads",
             prefill: { name: session?.user?.name, email: session?.user?.email },
             theme: { color: "#3b82f6" },
             modal: { ondismiss: () => setLoading(false) },
@@ -98,7 +87,7 @@ export function PaymentPage() {
                     body: JSON.stringify(payment)
                 });
                 if (!verification.ok) {
-                    setMessage("Payment verification failed. Please contact support before trying again.");
+                    setMessage("Payment verification failed. Please try again.");
                     setLoading(false);
                     return;
                 }
@@ -112,9 +101,9 @@ export function PaymentPage() {
         <main className="mx-auto flex min-h-[calc(100vh-5rem)] w-full max-w-xl items-center px-4 py-10">
             <section className="glass-panel w-full rounded-[24px] p-6 md:p-8">
                 <p className="section-kicker">Secure checkout</p>
-                <h1 className="mt-2 text-3xl font-semibold">Unlock unlimited downloads</h1>
+                <h1 className="mt-2 text-3xl font-semibold">Unlock Premium downloads</h1>
                 <p className="mt-3 text-sm leading-7 text-[var(--text-soft)]">
-                    Your first three downloads are free. After that, continue with automatic Razorpay billing at ₹49 per month.
+                    Your first three downloads are free. Pay ₹49 once for 30 days of Premium access. No recurring billing is set up.
                 </p>
                 {status !== "authenticated" ? (
                     <button type="button" onClick={signInWithGoogle} disabled={loading} className="cta-primary mt-6 w-full disabled:opacity-60">
@@ -124,7 +113,7 @@ export function PaymentPage() {
                 ) : (
                     <button type="button" onClick={startPayment} disabled={loading} className="cta-primary mt-6 w-full disabled:opacity-60">
                         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
-                        {loading ? "Opening secure checkout..." : "Start ₹49/month subscription"}
+                        {loading ? "Opening secure checkout..." : "Pay ₹49 for 30 days"}
                     </button>
                 )}
                 {message ? <p className="mt-4 text-sm text-rose-500">{message}</p> : null}

@@ -11,13 +11,18 @@ export async function POST() {
     }
 
     const collection = await getTeleprompterCollection();
-    const user = await collection.findOne<{ plan?: { isPremium?: boolean }; downloadCount?: number }>({
+    const user = await collection.findOne<{ plan?: { isPremium?: boolean; expiresAt?: string }; downloadCount?: number }>({
         kind: "user",
         email: session.user.email
     });
 
-    if (user?.plan?.isPremium) {
+    const premiumActive = Boolean(user?.plan?.isPremium && user.plan.expiresAt && new Date(user.plan.expiresAt).getTime() > Date.now());
+    if (premiumActive) {
         return NextResponse.json({ allowed: true, source: "subscription", remaining: 0 });
+    }
+
+    if (user?.plan?.isPremium) {
+        await collection.updateOne({ kind: "user", email: session.user.email }, { $set: { "plan.isPremium": false, "plan.status": "expired", updatedAt: new Date().toISOString() } });
     }
 
     const downloadCount = Number(user?.downloadCount ?? 0);

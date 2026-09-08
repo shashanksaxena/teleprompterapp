@@ -65,6 +65,9 @@ export function RecordingPanel({
             key={recordingUrl}
             src={recordingUrl}
             controls
+            controlsList="nodownload noplaybackrate noremoteplayback"
+            disablePictureInPicture
+            disableRemotePlayback
             playsInline
             preload="metadata"
             className="aspect-video w-full object-cover"

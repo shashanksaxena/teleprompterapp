@@ -13,17 +13,17 @@ export async function POST(request: Request) {
     }
 
     const body = (await request.json()) as {
-        razorpay_subscription_id?: string;
+        razorpay_order_id?: string;
         razorpay_payment_id?: string;
         razorpay_signature?: string;
     };
     const secret = process.env.RAZORPAY_KEY_SECRET;
-    if (!secret || !body.razorpay_subscription_id || !body.razorpay_payment_id || !body.razorpay_signature) {
+    if (!secret || !body.razorpay_order_id || !body.razorpay_payment_id || !body.razorpay_signature) {
         return NextResponse.json({ error: "Invalid payment response." }, { status: 400 });
     }
 
     const expected = createHmac("sha256", secret)
-        .update(`${body.razorpay_payment_id}|${body.razorpay_subscription_id}`)
+        .update(`${body.razorpay_order_id}|${body.razorpay_payment_id}`)
         .digest("hex");
     const valid = expected.length === body.razorpay_signature.length &&
         timingSafeEqual(Buffer.from(expected), Buffer.from(body.razorpay_signature));
@@ -33,13 +33,13 @@ export async function POST(request: Request) {
     }
 
     const activatedAt = nowIso();
-    const nextBillingAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
     const collection = await getTeleprompterCollection();
 
     await collection.updateOne(
         {
             kind: "payment_intent",
-            providerSubscriptionId: body.razorpay_subscription_id,
+            providerOrderId: body.razorpay_order_id,
             ownerId: session.user.id
         },
         {
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
                 status: "active",
                 providerPaymentId: body.razorpay_payment_id,
                 activatedAt,
-                nextBillingAt,
+                expiresAt,
                 verifiedAt: activatedAt
             }
         }
@@ -62,17 +62,18 @@ export async function POST(request: Request) {
                     name: "Premium",
                     isPremium: true,
                     priceInr: 49,
-                    billingCycle: "monthly",
+                    billingCycle: "one_time_30_days",
                     status: "active",
                     activatedAt,
-                    nextBillingAt,
+                    expiresAt,
                     provider: "razorpay",
-                    providerSubscriptionId: body.razorpay_subscription_id
+                    providerOrderId: body.razorpay_order_id,
+                    providerPaymentId: body.razorpay_payment_id
                 }
             }
         },
         { upsert: true }
     );
 
-    return NextResponse.json({ ok: true, isPremium: true, nextBillingAt });
+    return NextResponse.json({ ok: true, isPremium: true, expiresAt });
 }

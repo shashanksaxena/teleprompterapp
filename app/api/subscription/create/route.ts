@@ -13,26 +13,25 @@ export async function POST() {
 
     const keyId = process.env.RAZORPAY_KEY_ID;
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
-    const planId = process.env.RAZORPAY_PLAN_ID;
 
-    if (!keyId || !keySecret || !planId) {
-        return NextResponse.json({ error: "Razorpay subscription is not configured." }, { status: 503 });
+    if (!keyId || !keySecret) {
+        return NextResponse.json({ error: "Razorpay payment is not configured." }, { status: 503 });
     }
 
-    const response = await fetch("https://api.razorpay.com/v1/subscriptions", {
+    const response = await fetch("https://api.razorpay.com/v1/orders", {
         method: "POST",
         headers: {
             Authorization: `Basic ${Buffer.from(`${keyId}:${keySecret}`).toString("base64")}`,
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            plan_id: planId,
-            total_count: Number(process.env.RAZORPAY_TOTAL_COUNT || 12),
-            quantity: 1,
-            customer_notify: 1,
+            amount: 4900,
+            currency: "INR",
+            receipt: `teleprompter_${createServerId()}`,
+            payment_capture: 1,
             notes: {
                 email: session.user.email,
-                product: "FreeTeleprompter.in monthly downloads"
+                product: "FreeTeleprompter.in 30-day download access"
             }
         })
     });
@@ -42,29 +41,29 @@ export async function POST() {
             error?: { description?: string };
         } | null;
         return NextResponse.json(
-            { error: razorpayError?.error?.description || "Unable to create the subscription." },
+            { error: razorpayError?.error?.description || "Unable to create the payment order." },
             { status: 502 }
         );
     }
 
-    const subscription = (await response.json()) as { id: string };
+    const order = (await response.json()) as { id: string };
     const collection = await getTeleprompterCollection();
     await collection.insertOne({
         kind: "payment_intent",
         intentId: createServerId(),
         provider: "razorpay",
-        providerSubscriptionId: subscription.id,
+        providerOrderId: order.id,
         ownerId: session.user.id,
         email: session.user.email,
         amountInr: 49,
-        planName: "Premium",
+        planName: "Premium 30-day access",
         status: "created",
         createdAt: nowIso()
     });
 
     return NextResponse.json({
         keyId,
-        subscriptionId: subscription.id,
+        orderId: order.id,
         amountInr: 49
     });
 }

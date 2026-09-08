@@ -98,7 +98,17 @@ export function RecordingStage({
             className={cn("stage-video h-full w-full object-cover", mirrorCamera && "mirror-text")}
           />
         ) : recordingUrl ? (
-          <video src={recordingUrl} autoPlay muted loop playsInline className="stage-video h-full w-full object-cover" />
+          <video
+            src={recordingUrl}
+            autoPlay
+            muted
+            loop
+            playsInline
+            controlsList="nodownload noplaybackrate noremoteplayback"
+            disablePictureInPicture
+            disableRemotePlayback
+            className="stage-video h-full w-full object-cover"
+          />
         ) : (
           <div className="h-full w-full bg-neutral-950" />
         )}
