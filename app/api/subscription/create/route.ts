@@ -29,7 +29,7 @@ export async function POST() {
             plan_id: planId,
             total_count: Number(process.env.RAZORPAY_TOTAL_COUNT || 12),
             quantity: 1,
-            customer_notify: true,
+            customer_notify: 1,
             notes: {
                 email: session.user.email,
                 product: "FreeTeleprompter.in monthly downloads"
@@ -38,7 +38,13 @@ export async function POST() {
     });
 
     if (!response.ok) {
-        return NextResponse.json({ error: "Unable to create the subscription." }, { status: 502 });
+        const razorpayError = (await response.json().catch(() => null)) as {
+            error?: { description?: string };
+        } | null;
+        return NextResponse.json(
+            { error: razorpayError?.error?.description || "Unable to create the subscription." },
+            { status: 502 }
+        );
     }
 
     const subscription = (await response.json()) as { id: string };
