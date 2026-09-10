@@ -53,7 +53,7 @@ export function RecordingPanel({
           </p>
         </div>
         <div className="rounded-md border border-[var(--border)] px-3 py-2 text-sm text-[var(--text-soft)]">
-          {isPremium ? "Premium download" : "Download locked"}
+          {isPremium ? "Unlimited downloads" : "3 free video downloads"}
         </div>
       </div>
 

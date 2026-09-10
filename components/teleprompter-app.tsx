@@ -226,6 +226,9 @@ export function TeleprompterApp() {
       save_location: "cloud",
       script_length: content.length
     });
+    trackEvent("script_created", {
+      script_length: content.length
+    });
     setScriptTitle(titleLine);
   };
 
@@ -314,6 +317,9 @@ export function TeleprompterApp() {
       teleprompter.measure();
       setStageHasStarted(false);
       setIsStageMode(true);
+      trackEvent("recording_started", {
+        camera: Boolean(recorder.liveStream)
+      });
       return;
     }
 
@@ -362,10 +368,11 @@ export function TeleprompterApp() {
       }
 
       if (response.status === 402) {
-        window.location.assign(`/payment?returnTo=${encodeURIComponent(window.location.pathname)}`);
+        setDownloadModalOpen(true);
         trackEvent("open_download_paywall", {
           authenticated: true
         });
+        trackEvent("free_download_limit_reached");
       } else {
         const payload = (await response.json().catch(() => null)) as { error?: string } | null;
         setDownloadError(payload?.error || "Download authorization failed. Please sign in again and retry.");
@@ -399,14 +406,13 @@ export function TeleprompterApp() {
     trackEvent("download_reel", {
       plan: activePlan.name.toLowerCase()
     });
+    trackEvent("video_downloaded", {
+      plan: activePlan.name.toLowerCase()
+    });
   };
 
   const handleDownloadAudio = async () => {
     if (!recorder.audioBlob) {
-      return;
-    }
-
-    if (!(await authorizeDownload())) {
       return;
     }
 
@@ -427,6 +433,9 @@ export function TeleprompterApp() {
 
   const handleToggleVoice = () => {
     speech.toggle();
+    if (!speech.enabled && speech.supported) {
+      trackEvent("voice_scroll_started");
+    }
     trackEvent("toggle_voice_scroll", {
       supported: speech.supported,
       enabled: !speech.enabled
@@ -449,6 +458,7 @@ export function TeleprompterApp() {
     () => ({
       isPlaying: teleprompter.isPlaying,
       progress: teleprompter.progress,
+      voiceChecking: speech.checking,
       voiceSupported: speech.supported,
       voiceEnabled: speech.enabled,
       voiceListening: speech.listening,
@@ -463,6 +473,7 @@ export function TeleprompterApp() {
       recorder.isSupported,
       speech.enabled,
       speech.error,
+      speech.checking,
       speech.listening,
       speech.supported,
       teleprompter.isPlaying,
@@ -646,8 +657,8 @@ export function TeleprompterApp() {
             <h2 className="mt-2 text-base font-semibold">Why FreeTeleprompter.in stands out</h2>
             <p className="mt-2 text-sm text-[var(--text-soft)]">
               Unlike a basic cue prompter demo, this teleprompter is structured for real usage with Google auth,
-              account-based saved scripts, recording, payment gating for reel downloads, analytics, AdSense support,
-              and future hooks for AI script generation, speech feedback, and video caption workflows.
+              account-based saved scripts, recording, and a clear download plan for creators who want a dependable
+              browser-based recording workflow.
             </p>
             <p className="mt-4 text-sm text-[var(--text-soft)]">
               Built for young creators, educators, founders, coaches, teachers, and marketers who want a clean tool

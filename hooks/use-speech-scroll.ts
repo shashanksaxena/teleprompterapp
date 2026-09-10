@@ -44,6 +44,7 @@ export function useSpeechScroll({ onAdvance }: UseSpeechScrollOptions) {
   const [listening, setListening] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [supported, setSupported] = useState(false);
+  const [checking, setChecking] = useState(true);
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
   const enabledRef = useRef(false);
   const recognitionCtorRef = useRef<(new () => SpeechRecognitionInstance) | null>(null);
@@ -80,7 +81,13 @@ export function useSpeechScroll({ onAdvance }: UseSpeechScrollOptions) {
     };
 
     recognition.onerror = (event) => {
-      setError(event.error === "not-allowed" ? "Microphone access was denied." : `Speech error: ${event.error}`);
+      const message =
+        event.error === "not-allowed" || event.error === "service-not-allowed"
+          ? "Microphone access is needed for voice scrolling. Allow it in your browser settings, then try again."
+          : event.error === "no-speech"
+            ? "I could not hear speech yet. Try speaking a little closer to your microphone."
+            : "Voice scrolling paused. You can continue with manual scrolling or try again.";
+      setError(message);
       setListening(false);
       enabledRef.current = false;
       setEnabled(false);
@@ -96,14 +103,24 @@ export function useSpeechScroll({ onAdvance }: UseSpeechScrollOptions) {
     };
 
     setError(null);
-    setListening(true);
-    recognition.start();
-    recognitionRef.current = recognition;
+    try {
+      recognition.start();
+      recognitionRef.current = recognition;
+      setListening(true);
+    } catch {
+      setError("Voice scrolling could not start. You can continue with manual scrolling.");
+      enabledRef.current = false;
+      setEnabled(false);
+    }
   }, [onAdvance]);
 
   const toggle = useCallback(() => {
+    if (checking) {
+      return;
+    }
+
     if (!supported) {
-      setError("Speech recognition is not supported in this browser.");
+      setError("Voice scrolling is not available in this browser. Manual scrolling is still ready to use.");
       return;
     }
 
@@ -120,12 +137,14 @@ export function useSpeechScroll({ onAdvance }: UseSpeechScrollOptions) {
   useEffect(() => {
     recognitionCtorRef.current = window.SpeechRecognition || window.webkitSpeechRecognition || null;
     setSupported(Boolean(recognitionCtorRef.current));
+    setChecking(false);
   }, []);
 
   useEffect(() => stop, [stop]);
 
   return {
     supported,
+    checking,
     enabled,
     listening,
     error,

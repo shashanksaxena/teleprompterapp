@@ -24,6 +24,7 @@ export type UserPlan = {
 export type TeleprompterMetrics = {
   isPlaying: boolean;
   progress: number;
+  voiceChecking: boolean;
   voiceSupported: boolean;
   voiceEnabled: boolean;
   voiceListening: boolean;

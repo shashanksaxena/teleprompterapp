@@ -1,6 +1,6 @@
 # FreeTeleprompter.in
 
-Production-ready Next.js teleprompter starter for `https://www.freeteleprompter.in/`, built with a mobile-first UI, smooth scrolling, local persistence, premium gating, and voice-controlled scrolling.
+Next.js teleprompter application for `https://www.freeteleprompter.in/`, built with a mobile-first UI, smooth scrolling, local persistence, recurring Pro billing, and voice-controlled scrolling.
 
 ## Tech Decisions
 

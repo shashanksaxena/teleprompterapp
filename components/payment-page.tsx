@@ -7,10 +7,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 type RazorpayOptions = {
     key: string;
-    order_id: string;
+    subscription_id: string;
     name: string;
     description: string;
-    handler: (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => void;
+    handler: (response: { razorpay_subscription_id: string; razorpay_payment_id: string; razorpay_signature: string }) => void;
     prefill?: { name?: string | null; email?: string | null };
     theme?: { color: string };
     modal?: { ondismiss?: () => void };
@@ -65,8 +65,8 @@ export function PaymentPage() {
         }
 
         const response = await fetch("/api/subscription/create", { method: "POST" });
-        const payload = (await response.json()) as { keyId?: string; orderId?: string; error?: string };
-        if (!response.ok || !payload.keyId || !payload.orderId) {
+        const payload = (await response.json()) as { keyId?: string; subscriptionId?: string; error?: string };
+        if (!response.ok || !payload.keyId || !payload.subscriptionId) {
             setMessage(payload.error || "Unable to start the payment.");
             setLoading(false);
             return;
@@ -74,9 +74,9 @@ export function PaymentPage() {
 
         const checkout = new window.Razorpay!({
             key: payload.keyId,
-            order_id: payload.orderId,
+            subscription_id: payload.subscriptionId,
             name: "FreeTeleprompter.in",
-            description: "30 days of teleprompter downloads",
+            description: "₹49/month for unlimited video downloads",
             prefill: { name: session?.user?.name, email: session?.user?.email },
             theme: { color: "#3b82f6" },
             modal: { ondismiss: () => setLoading(false) },
@@ -103,7 +103,7 @@ export function PaymentPage() {
                 <p className="section-kicker">Secure checkout</p>
                 <h1 className="mt-2 text-3xl font-semibold">Unlock Premium downloads</h1>
                 <p className="mt-3 text-sm leading-7 text-[var(--text-soft)]">
-                    Your first three downloads are free. Pay ₹49 once for 30 days of Premium access. No recurring billing is set up.
+                    Your first three downloads are free. Upgrade to Pro for unlimited video downloads at ₹49/month.
                 </p>
                 {status !== "authenticated" ? (
                     <button type="button" onClick={signInWithGoogle} disabled={loading} className="cta-primary mt-6 w-full disabled:opacity-60">
@@ -113,7 +113,7 @@ export function PaymentPage() {
                 ) : (
                     <button type="button" onClick={startPayment} disabled={loading} className="cta-primary mt-6 w-full disabled:opacity-60">
                         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
-                        {loading ? "Opening secure checkout..." : "Pay ₹49 for 30 days"}
+                        {loading ? "Opening secure checkout..." : "Upgrade to Pro for ₹49/month"}
                     </button>
                 )}
                 {message ? <p className="mt-4 text-sm text-rose-500">{message}</p> : null}

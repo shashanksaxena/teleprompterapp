@@ -128,11 +128,13 @@ export function ControlBar({
           <span>{Math.round(metrics.progress * 100)}% read</span>
           <span>Space = play / pause</span>
           <span>
-            {metrics.voiceSupported
-              ? metrics.voiceListening
-                ? "Voice listening"
-                : "Voice ready"
-              : "Voice unsupported"}
+            {metrics.voiceChecking
+              ? "Checking voice access"
+              : metrics.voiceSupported
+                ? metrics.voiceListening
+                  ? "Voice listening"
+                  : "Voice ready"
+                : "Manual scroll ready"}
           </span>
           <span>
             {metrics.recorderSupported

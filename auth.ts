@@ -112,7 +112,7 @@ export const authOptions: NextAuthOptions = {
           name?: string;
           image?: string;
           downloadCount?: number;
-          plan?: { isPremium?: boolean; name?: string; expiresAt?: string };
+          plan?: { isPremium?: boolean; name?: string; expiresAt?: string; status?: string };
         }>({
           kind: "user",
           email
@@ -122,7 +122,11 @@ export const authOptions: NextAuthOptions = {
           token.userId = dbUser._id.toString();
           token.name = dbUser.name ?? token.name;
           token.picture = dbUser.image ?? token.picture;
-          token.isPremium = Boolean(dbUser.plan?.isPremium && dbUser.plan.expiresAt && new Date(dbUser.plan.expiresAt).getTime() > Date.now());
+          token.isPremium = Boolean(
+            dbUser.plan?.isPremium &&
+            (dbUser.plan.status === "active" ||
+              (dbUser.plan.expiresAt && new Date(dbUser.plan.expiresAt).getTime() > Date.now()))
+          );
           token.planName = dbUser.plan?.name ?? "Free";
           token.freeDownloadsRemaining = Math.max(0, 3 - Number(dbUser.downloadCount ?? 0));
         }

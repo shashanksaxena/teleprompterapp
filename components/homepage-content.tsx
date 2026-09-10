@@ -122,6 +122,19 @@ export function HomepageContent() {
     <section className="mx-auto w-full max-w-[1180px] px-4 pb-8 sm:px-6 lg:px-8 xl:px-10">
       <div className="space-y-5">
         <section className="glass-panel rounded-[18px] p-5 md:p-6">
+          <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div>
+              <p className="section-kicker">Voice-controlled scrolling</p>
+              <h2 className="mt-2 text-2xl font-semibold leading-tight md:text-3xl">Teleprompter That Follows Your Voice</h2>
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--text-soft)] md:text-base">
+                Stop worrying about scrolling speed. Speak naturally and let the teleprompter follow your pace. Voice scroll is optional, and manual scrolling remains ready whenever you need it.
+              </p>
+            </div>
+            <Link href="/voice-scroll-teleprompter" className="cta-secondary">Explore voice scroll <ArrowRight className="h-4 w-4" /></Link>
+          </div>
+        </section>
+
+        <section className="glass-panel rounded-[18px] p-5 md:p-6">
           <p className="section-kicker">A better reading flow</p>
           <h2 className="mt-2 max-w-3xl text-2xl font-semibold leading-tight md:text-3xl">
             Designed to make recording feel calmer, smoother, and more natural.

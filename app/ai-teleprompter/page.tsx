@@ -6,7 +6,7 @@ import { createPageMetadata } from "@/lib/page-metadata";
 export const metadata: Metadata = createPageMetadata({
   title: "AI teleprompter for creators and educators",
   description:
-    "Explore an AI teleprompter workflow with voice-aware pacing, future-ready AI script generation, speaking assistance, and browser-based recording for creators and educators.",
+    "Explore a teleprompter workflow with voice-aware pacing, script reading assistance, and browser-based recording for creators and educators.",
   path: "/ai-teleprompter",
   keywords: [
     "AI teleprompter",

@@ -13,25 +13,25 @@ export async function POST() {
 
     const keyId = process.env.RAZORPAY_KEY_ID;
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
+    const planId = process.env.RAZORPAY_PLAN_ID;
 
-    if (!keyId || !keySecret) {
+    if (!keyId || !keySecret || !planId) {
         return NextResponse.json({ error: "Razorpay payment is not configured." }, { status: 503 });
     }
 
-    const response = await fetch("https://api.razorpay.com/v1/orders", {
+    const response = await fetch("https://api.razorpay.com/v1/subscriptions", {
         method: "POST",
         headers: {
             Authorization: `Basic ${Buffer.from(`${keyId}:${keySecret}`).toString("base64")}`,
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            amount: 4900,
-            currency: "INR",
-            receipt: `teleprompter_${createServerId()}`,
-            payment_capture: 1,
+            plan_id: planId,
+            total_count: Number(process.env.RAZORPAY_TOTAL_COUNT || 12),
+            customer_notify: 1,
             notes: {
                 email: session.user.email,
-                product: "FreeTeleprompter.in 30-day download access"
+                product: "FreeTeleprompter.in monthly Pro downloads"
             }
         })
     });
@@ -46,24 +46,24 @@ export async function POST() {
         );
     }
 
-    const order = (await response.json()) as { id: string };
+    const subscription = (await response.json()) as { id: string };
     const collection = await getTeleprompterCollection();
     await collection.insertOne({
         kind: "payment_intent",
         intentId: createServerId(),
         provider: "razorpay",
-        providerOrderId: order.id,
+        providerSubscriptionId: subscription.id,
         ownerId: session.user.id,
         email: session.user.email,
         amountInr: 49,
-        planName: "Premium 30-day access",
+        planName: "Pro monthly subscription",
         status: "created",
         createdAt: nowIso()
     });
 
     return NextResponse.json({
         keyId,
-        orderId: order.id,
+        subscriptionId: subscription.id,
         amountInr: 49
     });
 }

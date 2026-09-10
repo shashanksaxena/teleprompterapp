@@ -12,13 +12,13 @@ export const FREE_DOWNLOAD_LIMIT = 3;
 
 export const DEFAULT_SCRIPT = `Welcome to FreeTeleprompter.in.
 
-This production-ready starter is built for creators, educators, founders, and video teams who need a fast teleprompter that works beautifully on mobile.
+Record better videos without memorizing every line. This browser-based teleprompter helps creators, educators, founders, and video teams stay natural on camera.
 
-Use the editor to paste your script, adjust the reading speed, switch themes, and enable mirror mode when your camera setup needs reversed text.
+Paste your script, adjust the reading speed, switch themes, and enable mirror mode when your camera setup needs reversed text.
 
-If you prefer to drive the pace naturally, turn on voice-controlled scrolling. The app listens for your speech and nudges the prompt forward so the reading flow stays comfortable.
+For a more natural pace, turn on voice-controlled scrolling. The prompt follows your speech while you focus on the delivery.
 
-Future-ready hooks are already prepared for AI script generation, AI speech feedback, and video recording with captions.`;
+When you are ready, start the camera, record your take, review it, and download the video.`;
 
 export const DEFAULT_SETTINGS: AppSettings = {
   speed: 36,
