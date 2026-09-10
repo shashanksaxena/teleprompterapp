@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { AdSenseLoader } from "@/components/adsense-loader";
 import { Analytics, GoogleTagManagerNoScript } from "@/components/analytics";
 import { AuthProvider } from "@/components/auth-provider";
+import { InstallPrompt } from "@/components/install-prompt";
 import { StructuredData } from "@/components/structured-data";
 import { SiteNavigation } from "@/components/site-navigation";
 import { ThemeSelector } from "@/components/theme-selector";
@@ -110,6 +111,7 @@ export default function RootLayout({
         <AuthProvider>
           <SiteNavigation />
           <ThemeSelector />
+          <InstallPrompt />
           {children}
         </AuthProvider>
       </body>

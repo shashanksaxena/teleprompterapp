@@ -9,10 +9,13 @@ export default function manifest(): MetadataRoute.Manifest {
     name: siteConfig.title,
     short_name: siteConfig.shortName,
     description: siteConfig.description,
+    id: "/",
     start_url: "/",
+    scope: "/",
     display: "standalone",
     background_color: "#0f172a",
     theme_color: "#0f172a",
+    orientation: "portrait-primary",
     categories: ["productivity", "video", "business"],
     icons: [
       {
