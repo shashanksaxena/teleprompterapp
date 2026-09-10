@@ -20,7 +20,7 @@ export function AppHeader({ plan, compact = false }: AppHeaderProps) {
   return (
     <header className="glass-panel overflow-hidden rounded-[28px] p-5 md:p-7">
       {compact ? (
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="section-kicker">Teleprompter studio</p>
             <h1 className="mt-2 text-2xl font-semibold tracking-[-0.02em] md:text-3xl">Write, tune, and rehearse.</h1>
@@ -29,7 +29,19 @@ export function AppHeader({ plan, compact = false }: AppHeaderProps) {
               you record.
             </p>
           </div>
-          <div className="soft-badge shrink-0">{plan.isPremium ? "Premium plan" : "Free plan"}</div>
+          <div className="flex shrink-0 items-center gap-2 self-start rounded-2xl border border-[var(--border)] bg-[var(--surface-strong)]/80 p-1.5 shadow-sm">
+            <span className="soft-badge border-0 bg-transparent px-2">{plan.isPremium ? "Pro plan active" : "Free plan active"}</span>
+            {status === "authenticated" ? (
+              <button type="button" onClick={() => signOut()} className="account-action">
+                {session.user.name ? `Sign out ${session.user.name.split(" ")[0]}` : "Sign out"}
+              </button>
+            ) : (
+              <button type="button" onClick={() => signIn("google")} className="account-action account-action-primary">
+                <GoogleIcon />
+                Sign in
+              </button>
+            )}
+          </div>
         </div>
       ) : null}
 
@@ -146,26 +158,20 @@ export function AppHeader({ plan, compact = false }: AppHeaderProps) {
         </div>
       </div> : null}
 
-      <div className={`${compact ? "mt-5" : "mt-6"} flex flex-col gap-3 border-t border-[var(--border)] pt-4 sm:flex-row sm:items-center sm:justify-between`}>
-        <div className="inline-flex items-center justify-center rounded-md border border-[var(--border)] px-3 py-2 text-sm text-[var(--text-soft)]">
-          {plan.isPremium ? "Premium plan active" : "Free plan active"}
+      {!compact ? (
+        <div className="mt-6 flex items-center justify-end border-t border-[var(--border)] pt-4">
+          {status === "authenticated" ? (
+            <button type="button" onClick={() => signOut()} className="account-action">
+              {session.user.name ? `Sign out ${session.user.name.split(" ")[0]}` : "Sign out"}
+            </button>
+          ) : (
+            <button type="button" onClick={() => signIn("google")} className="account-action account-action-primary">
+              <GoogleIcon />
+              Sign in with Google
+            </button>
+          )}
         </div>
-
-        {status === "authenticated" ? (
-          <button type="button" onClick={() => signOut()} className="control-chip inline-flex justify-center">
-            {session.user.name ? `Sign out ${session.user.name.split(" ")[0]}` : "Sign out"}
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={() => signIn("google")}
-            className="control-chip inline-flex items-center justify-center gap-2"
-          >
-            <GoogleIcon />
-            Sign in with Google
-          </button>
-        )}
-      </div>
+      ) : null}
     </header>
   );
 }

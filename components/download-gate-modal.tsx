@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { signIn, useSession } from "next-auth/react";
-import { CheckCircle2, CreditCard, Download, Loader2, X } from "lucide-react";
+import { CheckCircle2, CreditCard, Download, Loader2, ShieldCheck, Sparkles, X } from "lucide-react";
 import { GoogleIcon } from "@/components/google-icon";
 
 type Props = { open: boolean; onClose: () => void; onDownload: () => void; recordingReady: boolean; onSubscriptionActivated: () => void };
@@ -40,9 +40,60 @@ export function DownloadGateModal({ open, onClose, onDownload, recordingReady, o
         checkout.open();
     };
 
-    return <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/60 px-4" role="dialog" aria-modal="true" aria-labelledby="download-gate-title"><div className="glass-panel w-full max-w-xl rounded-[28px] p-5 shadow-float">
-        <div className="mb-4 flex items-start justify-between gap-4"><div><h2 id="download-gate-title" className="text-xl font-semibold">{title}</h2><p className="mt-1 text-sm text-[var(--text-soft)]">{intro}</p></div><button type="button" onClick={onClose} className="rounded-xl border border-[var(--border)] p-2" aria-label="Close"><X className="h-4 w-4" /></button></div>
-        {!recordingReady ? <div className="rounded-[20px] border border-dashed border-[var(--border)] p-4 text-sm text-[var(--text-soft)]">Record a take first, then open the download flow.</div> : null}
-        {status !== "authenticated" ? <div className="space-y-4"><p className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-strong)] p-4 text-sm text-[var(--text-soft)]">Sign in to receive your 3 free downloads and manage Pro access.</p><button type="button" onClick={() => signIn("google", { callbackUrl: window.location.href })} className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-[var(--accent-contrast)]"><GoogleIcon />Sign in with Google</button></div> : <div className="space-y-4"><div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-strong)] p-4"><div className="flex items-start gap-3"><CreditCard className="mt-0.5 h-5 w-5 text-[var(--accent)]" /><div><h3 className="font-semibold">Pro monthly subscription</h3><p className="mt-1 text-sm text-[var(--text-soft)]">Unlimited video downloads for ₹49/month. Cancel from your Razorpay subscription settings.</p></div></div></div><button type="button" onClick={startPayment} disabled={loading} className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-[var(--accent-contrast)] disabled:opacity-60">{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}{loading ? "Opening secure checkout..." : "Upgrade to Pro"}</button>{message ? <p className="text-sm text-rose-500">{message}</p> : null}</div>}
-    </div></div>;
+    return (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/70 px-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="download-gate-title">
+            <div className="glass-panel w-full max-w-lg overflow-hidden rounded-[28px] p-0 shadow-[0_24px_90px_rgba(15,23,42,0.3)]">
+                <div className="border-b border-[var(--border)] bg-[var(--accent-soft)] px-5 py-5 sm:px-7">
+                    <div className="flex items-start justify-between gap-4">
+                        <div className="flex gap-3">
+                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--accent)] text-[var(--accent-contrast)] shadow-lg">
+                                <Download className="h-5 w-5" />
+                            </div>
+                            <div>
+                                <p className="section-kicker">Video downloads</p>
+                                <h2 id="download-gate-title" className="mt-1 text-xl font-semibold">{title}</h2>
+                            </div>
+                        </div>
+                        <button type="button" onClick={onClose} className="rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] p-2" aria-label="Close">
+                            <X className="h-4 w-4" />
+                        </button>
+                    </div>
+                    <p className="mt-4 max-w-xl text-sm leading-6 text-[var(--text-soft)]">{intro}</p>
+                </div>
+
+                <div className="space-y-4 p-5 sm:p-7">
+                    {!recordingReady ? <div className="rounded-2xl border border-dashed border-[var(--border)] p-4 text-sm text-[var(--text-soft)]">Record a take first, then open the download flow.</div> : null}
+                    {status !== "authenticated" ? (
+                        <>
+                            <div className="grid gap-3 sm:grid-cols-3">
+                                {[
+                                    [Sparkles, "3 free downloads"],
+                                    [ShieldCheck, "Private account"],
+                                    [Download, "Download your take"]
+                                ].map(([Icon, label]) => (
+                                    <div key={label as string} className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-3 text-center">
+                                        <Icon className="mx-auto h-4 w-4 text-[var(--accent)]" />
+                                        <p className="mt-2 text-xs font-semibold text-[var(--text-soft)]">{label as string}</p>
+                                    </div>
+                                ))}
+                            </div>
+                            <button type="button" onClick={() => signIn("google", { callbackUrl: window.location.href })} className="flex min-h-12 w-full items-center justify-center gap-3 rounded-xl bg-[var(--accent)] px-4 text-sm font-semibold text-[var(--accent-contrast)] shadow-[0_14px_28px_rgba(59,130,246,0.24)] transition hover:-translate-y-0.5 hover:bg-blue-600">
+                                <GoogleIcon />
+                                Continue with Google
+                            </button>
+                            <p className="text-center text-xs text-[var(--text-soft)]">No payment is required for your first 3 video downloads.</p>
+                        </>
+                    ) : (
+                        <>
+                            <div className="rounded-2xl border border-[var(--accent)]/25 bg-[var(--accent-soft)] p-4">
+                                <div className="flex items-start gap-3"><CreditCard className="mt-0.5 h-5 w-5 text-[var(--accent)]" /><div><h3 className="font-semibold">Pro monthly subscription</h3><p className="mt-1 text-sm leading-6 text-[var(--text-soft)]">Unlimited video downloads for ₹49/month.</p></div></div>
+                            </div>
+                            <button type="button" onClick={startPayment} disabled={loading} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-4 text-sm font-semibold text-[var(--accent-contrast)] shadow-[0_14px_28px_rgba(59,130,246,0.24)] disabled:opacity-60">{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}{loading ? "Opening secure checkout..." : "Upgrade to Pro - ₹49/month"}</button>
+                            {message ? <p className="text-sm text-rose-500">{message}</p> : null}
+                        </>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
 }

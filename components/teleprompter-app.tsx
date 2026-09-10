@@ -344,6 +344,12 @@ export function TeleprompterApp() {
     teleprompter.restart();
     recorder.stop();
     await exitStage();
+    requestAnimationFrame(() => {
+      document.getElementById("recording-preview")?.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    });
     trackEvent("stop_teleprompter");
   };
 
@@ -583,6 +589,7 @@ export function TeleprompterApp() {
           />
 
           <RecordingPanel
+            id="recording-preview"
             liveStream={recorder.liveStream}
             recordingUrl={recorder.recordingUrl}
             audioUrl={recorder.audioUrl}

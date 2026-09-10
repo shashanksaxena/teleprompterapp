@@ -262,9 +262,8 @@ export function HomepageContent() {
           </Link>
         </section>
 
-        <section className="glass-panel rounded-[18px] p-5 md:p-6">
-          <p className="section-kicker">Workflow</p>
-          <h2 className="mt-2 text-xl font-semibold">A lightweight process that keeps your attention on the delivery</h2>
+        <details className="accordion-panel" open>
+          <summary className="accordion-summary"><span><span className="section-kicker">Workflow</span><span className="mt-2 block text-xl font-semibold">A lightweight process that keeps your attention on the delivery</span></span><span className="accordion-plus" aria-hidden="true" /></summary>
           <div className="mt-4 grid gap-3 md:grid-cols-3">
             {workflowSteps.map((step) => (
               <article key={step.title} className="feature-card">
@@ -273,11 +272,10 @@ export function HomepageContent() {
               </article>
             ))}
           </div>
-        </section>
+        </details>
 
-        <section className="glass-panel rounded-[18px] p-5 md:p-6">
-          <p className="section-kicker">Use cases</p>
-          <h2 className="mt-2 text-xl font-semibold">Built for the way people actually record and speak</h2>
+        <details className="accordion-panel">
+          <summary className="accordion-summary"><span><span className="section-kicker">Use cases</span><span className="mt-2 block text-xl font-semibold">Built for the way people actually record and speak</span></span><span className="accordion-plus" aria-hidden="true" /></summary>
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             {useCases.map((useCase) => (
               <article key={useCase.title} className="feature-card">
@@ -286,13 +284,12 @@ export function HomepageContent() {
               </article>
             ))}
           </div>
-        </section>
+        </details>
 
-        <section className="glass-panel rounded-[18px] p-5 md:p-6">
+        <details className="accordion-panel">
+          <summary className="accordion-summary"><span><span className="section-kicker">Trust and usability</span><span className="mt-2 block text-xl font-semibold">Clearer expectations before the recording starts</span></span><span className="accordion-plus" aria-hidden="true" /></summary>
           <div className="grid gap-5 lg:grid-cols-[1fr_0.9fr]">
             <div>
-              <p className="section-kicker">Trust and usability</p>
-              <h2 className="mt-2 text-xl font-semibold">Clearer expectations before the recording starts</h2>
               <ul className="mt-4 space-y-3 text-sm leading-6 text-[var(--text-soft)] md:text-base">
                 {qualityNotes.map((note) => (
                   <li key={note} className="flex gap-3">
@@ -336,11 +333,10 @@ export function HomepageContent() {
               </div>
             </div>
           </div>
-        </section>
+        </details>
 
-        <section className="glass-panel rounded-[18px] p-5 md:p-6">
-          <p className="section-kicker">FAQ</p>
-          <h2 className="mt-2 text-xl font-semibold">Common questions from new users</h2>
+        <details className="accordion-panel">
+          <summary className="accordion-summary"><span><span className="section-kicker">FAQ</span><span className="mt-2 block text-xl font-semibold">Common questions from new users</span></span><span className="accordion-plus" aria-hidden="true" /></summary>
           <div className="mt-4 grid gap-4 md:grid-cols-3">
             {faqs.map((faq) => (
               <article key={faq.question} className="feature-card">
@@ -349,7 +345,7 @@ export function HomepageContent() {
               </article>
             ))}
           </div>
-        </section>
+        </details>
       </div>
     </section>
   );

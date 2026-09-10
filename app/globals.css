@@ -104,6 +104,27 @@ html[data-theme="dark"] .glass-panel {
   transform: translateY(-1px);
 }
 
+.account-action {
+  @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-3.5 text-sm font-semibold transition;
+  color: var(--text-soft);
+}
+
+.account-action:hover {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.account-action-primary {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.22);
+}
+
+.account-action-primary:hover {
+  background: #2563eb;
+  color: #ffffff;
+}
+
 .section-kicker {
   @apply text-[11px] font-semibold uppercase tracking-[0.22em];
   color: var(--text-soft);
@@ -313,6 +334,59 @@ html[data-theme="dark"] .feature-item {
   border-radius: 18px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.52));
   padding: 1rem;
+}
+
+.accordion-panel {
+  @apply glass-panel overflow-hidden rounded-[18px] p-5 md:p-6;
+}
+
+.accordion-summary {
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  list-style: none;
+}
+
+.accordion-summary::-webkit-details-marker {
+  display: none;
+}
+
+.accordion-plus {
+  position: relative;
+  display: block;
+  height: 2rem;
+  width: 2rem;
+  flex: 0 0 auto;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--surface-strong);
+}
+
+.accordion-plus::before,
+.accordion-plus::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  content: "";
+  background: var(--accent);
+  transform: translate(-50%, -50%);
+}
+
+.accordion-plus::before {
+  height: 1px;
+  width: 0.75rem;
+}
+
+.accordion-plus::after {
+  height: 0.75rem;
+  width: 1px;
+  transition: transform 180ms ease;
+}
+
+.accordion-panel[open] .accordion-plus::after {
+  transform: translate(-50%, -50%) rotate(90deg);
 }
 
 html[data-theme="dark"] .feature-card {

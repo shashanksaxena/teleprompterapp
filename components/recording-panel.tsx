@@ -6,6 +6,7 @@ import { Camera, Circle, Download, Music2, Video } from "lucide-react";
 import { formatDuration } from "@/lib/utils";
 
 type RecordingPanelProps = {
+  id?: string;
   liveStream: MediaStream | null;
   recordingUrl: string | null;
   audioUrl: string | null;
@@ -17,6 +18,7 @@ type RecordingPanelProps = {
 };
 
 export function RecordingPanel({
+  id,
   liveStream,
   recordingUrl,
   audioUrl,
@@ -43,7 +45,7 @@ export function RecordingPanel({
   }, [liveStream]);
 
   return (
-    <section className="glass-panel rounded-[16px] p-4">
+    <section id={id} className="glass-panel scroll-mt-6 rounded-[16px] p-4">
       <div className="mb-3 flex items-center justify-between gap-3">
         <div>
           <p className="section-kicker">Take preview</p>
