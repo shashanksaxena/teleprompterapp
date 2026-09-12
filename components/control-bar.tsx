@@ -32,7 +32,7 @@ export function ControlBar({
 
   const runOnce = (action: () => void) => {
     const now = Date.now();
-    if (now - lastTapRef.current < 300) {
+    if (now - lastTapRef.current < 450) {
       return;
     }
 
@@ -56,7 +56,7 @@ export function ControlBar({
     runOnce(onDownload);
   };
 
-  const pressAction = (action: () => void) => (event: React.MouseEvent | React.TouchEvent) => {
+  const handleAction = (action: () => void) => (event: React.PointerEvent<HTMLButtonElement>) => {
     event.preventDefault();
     action();
   };
@@ -68,81 +68,66 @@ export function ControlBar({
         (embedded ? "rounded-[14px] border border-[var(--border)] bg-[var(--surface-strong)] p-3" : "glass-panel sticky bottom-3 z-20 rounded-[14px] p-3")
       }
     >
-      <div className="flex flex-col gap-3">
-        <div className={embedded ? "flex flex-wrap items-center gap-1 pb-1" : "flex flex-nowrap items-center gap-1 overflow-x-auto pb-1"}>
+      <div className="flex flex-col gap-2.5">
+        <div className={embedded ? "flex flex-wrap items-center justify-between gap-1.5" : "flex flex-nowrap items-center gap-1.5 overflow-x-auto pb-1"}>
           <button
             type="button"
-            onMouseDown={pressAction(handleTogglePlay)}
-            onTouchStart={pressAction(handleTogglePlay)}
-            className="inline-flex min-w-0 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg bg-[var(--accent)] px-2.5 py-1.5 text-xs font-semibold text-[var(--accent-contrast)] shadow-[0_14px_28px_rgba(59,130,246,0.24)] transition hover:opacity-95 active:scale-[0.99]"
+            onPointerDown={handleAction(handleTogglePlay)}
+            aria-label={metrics.isPlaying ? "Pause recording" : "Play recording"}
+            title={metrics.isPlaying ? "Pause" : "Play"}
+            className="inline-flex h-10 min-w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--accent)] text-[var(--accent-contrast)] shadow-[0_12px_26px_rgba(59,130,246,0.26)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_34px_rgba(59,130,246,0.3)] active:scale-[0.98] touch-manipulation"
           >
             {metrics.isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-            {metrics.isPlaying ? "Pause" : "Play"}
           </button>
 
           <button
             type="button"
-            onMouseDown={pressAction(handleStop)}
-            onTouchStart={pressAction(handleStop)}
-            className="control-chip inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap px-2.5 py-1.5 text-xs"
+            onPointerDown={handleAction(handleStop)}
+            aria-label="Stop recording"
+            title="Stop"
+            className="control-chip inline-flex h-10 min-w-10 shrink-0 items-center justify-center touch-manipulation"
           >
             <Square className="h-4 w-4" />
-            Stop
           </button>
 
           {onRestart ? (
             <button
               type="button"
-              onMouseDown={pressAction(() => runOnce(onRestart))}
-              onTouchStart={pressAction(() => runOnce(onRestart))}
-              className="control-chip inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap px-2.5 py-1.5 text-xs"
+              onPointerDown={handleAction(() => runOnce(onRestart))}
+              aria-label="Restart from beginning"
+              title="Retake"
+              className="control-chip inline-flex h-10 min-w-10 shrink-0 items-center justify-center touch-manipulation"
             >
               <RotateCcw className="h-4 w-4" />
-              Retake
             </button>
           ) : null}
 
           <button
             type="button"
-            onMouseDown={pressAction(handleToggleVoice)}
-            onTouchStart={pressAction(handleToggleVoice)}
-            className="control-chip inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap px-2.5 py-1.5 text-xs"
+            onPointerDown={handleAction(handleToggleVoice)}
+            aria-label={metrics.voiceEnabled ? "Disable voice scroll" : "Enable voice scroll"}
+            title={metrics.voiceEnabled ? "Voice on" : "Voice scroll"}
+            className="control-chip inline-flex h-10 min-w-10 shrink-0 items-center justify-center touch-manipulation"
           >
             <Mic className="h-4 w-4" />
-            {metrics.voiceEnabled ? "Voice on" : "Voice scroll"}
           </button>
 
           <button
             type="button"
-            onMouseDown={pressAction(handleDownload)}
-            onTouchStart={pressAction(handleDownload)}
+            onPointerDown={handleAction(handleDownload)}
+            aria-label="Download current recording"
+            title="Download reel"
             disabled={!canDownload}
-            className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg bg-[var(--accent)] px-2.5 py-1.5 text-xs font-semibold text-[var(--accent-contrast)] shadow-[0_10px_24px_rgba(59,130,246,0.22)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex h-10 min-w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--accent)] text-[var(--accent-contrast)] shadow-[0_10px_24px_rgba(59,130,246,0.22)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(59,130,246,0.28)] disabled:cursor-not-allowed disabled:opacity-50 touch-manipulation"
           >
             <Download className="h-4 w-4" />
-            Download reel
           </button>
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-[var(--text-soft)]">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] uppercase tracking-[0.12em] text-[var(--text-soft)]">
           <span>{Math.round(metrics.progress * 100)}% read</span>
-          <span>Space = play / pause</span>
-          <span>
-            {metrics.voiceChecking
-              ? "Checking voice access"
-              : metrics.voiceSupported
-                ? metrics.voiceListening
-                  ? "Voice listening"
-                  : "Voice ready"
-                : "Manual scroll ready"}
-          </span>
-          <span>
-            {metrics.recorderSupported
-              ? metrics.isRecording
-                ? "Recording live"
-                : "Recorder ready"
-              : "Recorder unsupported"}
-          </span>
+          <span>{metrics.voiceSupported ? (metrics.voiceListening ? "Voice live" : "Voice ready") : "Manual"}</span>
+          <span>{metrics.recorderSupported ? (metrics.isRecording ? "Recording" : "Ready") : "No camera"}</span>
         </div>
       </div>
 

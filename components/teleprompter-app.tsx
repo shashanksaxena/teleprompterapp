@@ -550,6 +550,12 @@ export function TeleprompterApp() {
           }
           onRestart={handleRestart}
           onTogglePlay={handleTogglePlayback}
+          onTogglePreview={() => {
+            teleprompter.restart();
+            teleprompter.measure();
+            setStageHasStarted(false);
+          }}
+          onScriptChange={(value) => draftStore.setValue(value)}
           onStop={handleStop}
           onToggleVoice={handleToggleVoice}
           onDownload={handleDownload}
@@ -577,29 +583,28 @@ export function TeleprompterApp() {
               onLoadDemoScript={handleLoadDemoScript}
             />
 
-            <div className="mt-3 min-w-0 space-y-3">
-              <div className="min-w-0">
-                <p className="section-kicker mb-3">Session controls</p>
-                <ControlBar
-                  embedded
-                  className="rounded-[14px] border border-[var(--border)] bg-[var(--surface-strong)] p-2.5"
-                  metrics={metrics}
-                  onTogglePlay={handleTogglePlayback}
-                  onStop={handleStop}
-                  onRestart={handleRestart}
-                  onToggleVoice={handleToggleVoice}
-                  onDownload={handleDownload}
-                  canDownload={Boolean(recorder.recordingBlob) || recorder.isRecording}
-                />
-              </div>
+            <div className="mt-3 min-w-0">
+              <div className="rounded-[16px] border border-[var(--border)] bg-[var(--surface-strong)] p-2.5 shadow-[0_10px_24px_rgba(15,23,42,0.04)]">
+                <div className="grid gap-3 xl:grid-cols-[1.2fr_1fr]">
+                  <ControlBar
+                    embedded
+                    className="rounded-[12px] border border-[var(--border)] bg-[var(--surface)] p-2.5"
+                    metrics={metrics}
+                    onTogglePlay={handleTogglePlayback}
+                    onStop={handleStop}
+                    onRestart={handleRestart}
+                    onToggleVoice={handleToggleVoice}
+                    onDownload={handleDownload}
+                    canDownload={Boolean(recorder.recordingBlob) || recorder.isRecording}
+                  />
 
-              <div className="min-w-0">
-                <SettingsPanel
-                  embedded
-                  settings={settingsStore.value}
-                  onSettingsChange={handleSettingsChange}
-                  onToggleFullscreen={handleToggleFullscreen}
-                />
+                  <SettingsPanel
+                    embedded
+                    settings={settingsStore.value}
+                    onSettingsChange={handleSettingsChange}
+                    onToggleFullscreen={handleToggleFullscreen}
+                  />
+                </div>
               </div>
             </div>
           </section>

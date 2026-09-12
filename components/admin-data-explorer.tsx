@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronUp, CreditCard, FileText, MessageSquare, UserRound } from "lucide-react";
+import { Bell, ChevronDown, ChevronUp, CreditCard, FileText, MessageSquare, UserRound } from "lucide-react";
 
 export type AdminUser = {
     id: string;
@@ -50,11 +50,23 @@ export type AdminLead = {
     status: string;
 };
 
+export type AdminNotificationConsent = {
+    id: string;
+    decision: string;
+    promptType: string;
+    source: string;
+    email: string | null;
+    name: string | null;
+    createdAt: string;
+    userId: string | null;
+};
+
 type AdminDataExplorerProps = {
     users: AdminUser[];
     scripts: AdminScript[];
     payments: AdminPayment[];
     leads: AdminLead[];
+    notificationConsents?: AdminNotificationConsent[];
 };
 
 function formatDate(value: string | null) {
@@ -68,17 +80,27 @@ function formatDate(value: string | null) {
     }).format(new Date(value));
 }
 
-export function AdminDataExplorer({ users, scripts, payments, leads }: AdminDataExplorerProps) {
+export function AdminDataExplorer({ users, scripts, payments, leads, notificationConsents = [] }: AdminDataExplorerProps) {
     const [openUserId, setOpenUserId] = useState<string | null>(null);
     const [openScriptId, setOpenScriptId] = useState<string | null>(null);
-    const [activePanel, setActivePanel] = useState<"users" | "scripts" | "payments" | "leads">("users");
+    const [activePanel, setActivePanel] = useState<"users" | "scripts" | "payments" | "leads" | "notifications">("users");
+    const [notificationFilter, setNotificationFilter] = useState<"all" | "accepted" | "rejected" | "dismissed">("all");
 
     const panels = [
         ["users", "Accounts", UserRound],
         ["scripts", "Scripts", FileText],
         ["payments", "Payments", CreditCard],
-        ["leads", "Contact leads", MessageSquare]
+        ["leads", "Contact leads", MessageSquare],
+        ["notifications", "Notifications", Bell]
     ] as const;
+
+    const filteredNotificationConsents = notificationConsents.filter((entry) => {
+        if (notificationFilter === "all") {
+            return true;
+        }
+
+        return entry.decision === notificationFilter;
+    });
 
     return (
         <div className="mt-5">
@@ -239,6 +261,48 @@ export function AdminDataExplorer({ users, scripts, payments, leads }: AdminData
                                 </div>
                             </details>
                         )) : <p className="py-4 text-sm text-[var(--text-soft)]">No contact leads found.</p>}
+                    </div>
+                </section>
+
+                <section className={`glass-panel rounded-[18px] p-5 md:p-6 ${activePanel === "notifications" ? "" : "hidden"}`}>
+                    <div className="flex items-start justify-between gap-3">
+                        <div>
+                            <p className="section-kicker">Engagement</p>
+                            <h2 className="mt-2 text-xl font-semibold">Notification consent</h2>
+                        </div>
+                        <Bell className="h-5 w-5 text-[var(--accent)]" />
+                    </div>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                        {(["all", "accepted", "rejected", "dismissed"] as const).map((filter) => (
+                            <button
+                                key={filter}
+                                type="button"
+                                onClick={() => setNotificationFilter(filter)}
+                                className={`rounded-full border px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] transition ${notificationFilter === filter ? "border-[var(--accent)] bg-[var(--accent)] text-[var(--accent-contrast)]" : "border-[var(--border)] bg-[var(--surface-strong)] text-[var(--text-soft)]"}`}
+                            >
+                                {filter}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="mt-4 space-y-2">
+                        {filteredNotificationConsents.length ? filteredNotificationConsents.map((entry) => (
+                            <div key={entry.id} className="rounded-[12px] border border-[var(--border)] bg-[var(--surface-strong)] p-3">
+                                <div className="flex flex-wrap items-center justify-between gap-2">
+                                    <p className="text-sm font-semibold">{entry.name || entry.email || "Anonymous user"}</p>
+                                    <span className="rounded-full bg-[var(--accent-soft)] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--accent)]">
+                                        {entry.decision}
+                                    </span>
+                                </div>
+                                <div className="mt-2 grid gap-2 text-sm text-[var(--text-soft)] sm:grid-cols-2">
+                                    <p><strong className="text-[var(--text)]">Prompt:</strong> {entry.promptType}</p>
+                                    <p><strong className="text-[var(--text)]">Source:</strong> {entry.source}</p>
+                                    <p><strong className="text-[var(--text)]">Email:</strong> {entry.email || "Not provided"}</p>
+                                    <p><strong className="text-[var(--text)]">User ID:</strong> {entry.userId || "Guest"}</p>
+                                    <p className="sm:col-span-2"><strong className="text-[var(--text)]">Recorded:</strong> {formatDate(entry.createdAt)}</p>
+                                </div>
+                            </div>
+                        )) : <p className="py-4 text-sm text-[var(--text-soft)]">No notification consent records found for the selected filter.</p>}
                     </div>
                 </section>
             </div>

@@ -546,12 +546,19 @@ html[data-theme="dark"] .glass-panel {
   @apply rounded-xl border px-3 py-2 text-sm font-medium transition;
   border-color: var(--border);
   background: var(--surface-strong);
+  touch-action: manipulation;
 }
 
 .control-chip:hover,
 .cta-primary:hover,
 .cta-secondary:hover {
-  transform: translateY(-1px);
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 12px 22px rgba(15, 23, 42, 0.08);
+}
+
+button,
+[role="button"] {
+  touch-action: manipulation;
 }
 
 .account-action {
@@ -904,12 +911,30 @@ html[data-theme="dark"] .feature-card {
 }
 
 .feature-showcase-card {
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.52));
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(147, 197, 253, 0.12), rgba(255, 255, 255, 0.8));
   padding: 1rem;
   min-height: 170px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 12px 24px rgba(15, 23, 42, 0.04);
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.feature-showcase-card h3,
+.mini-metric-card strong,
+.testimonial-card p:first-of-type,
+.feature-card h3 {
+  color: var(--text);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.feature-showcase-card p,
+.mini-metric-card span,
+.testimonial-card p,
+.feature-card p {
+  color: var(--text-soft);
+  font-weight: 600;
 }
 
 html[data-theme="dark"] .feature-showcase-card,
@@ -1037,19 +1062,21 @@ html[data-theme="dark"] .testimonial-card {
 }
 
 .mini-metric-card {
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.52));
-  padding: 1rem;
+  border: 1px solid rgba(59, 130, 246, 0.16);
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(191, 219, 254, 0.22));
+  padding: 1.1rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.4rem;
   text-align: center;
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.04);
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
 .mini-metric-card strong {
-  font-size: 1.25rem;
+  font-size: 1.45rem;
+  line-height: 1.1;
 }
 
 .mini-metric-card span {
@@ -1057,14 +1084,22 @@ html[data-theme="dark"] .testimonial-card {
   font-size: 0.76rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  font-weight: 700;
 }
 
 .testimonial-card {
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.52));
+  border: 1px solid rgba(59, 130, 246, 0.14);
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(219, 234, 254, 0.18));
   padding: 1rem;
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.04);
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.testimonial-card strong,
+.testimonial-card p:last-child {
+  font-weight: 800;
+  color: var(--text);
 }
 
 .cta-banner {
@@ -1073,10 +1108,16 @@ html[data-theme="dark"] .testimonial-card {
   gap: 1rem;
   align-items: flex-start;
   justify-content: space-between;
-  border: 1px solid rgba(59, 130, 246, 0.18);
+  border: 1px solid rgba(59, 130, 246, 0.22);
   border-radius: 22px;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(255, 255, 255, 0.7));
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(255, 255, 255, 0.8), rgba(191, 219, 254, 0.25));
   padding: 1.25rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.cta-banner h2,
+.floating-cta-bar span {
+  font-weight: 800;
 }
 
 .floating-cta-bar {

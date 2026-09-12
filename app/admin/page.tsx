@@ -33,11 +33,12 @@ export default async function AdminPage() {
     let scripts: AdminScript[] = [];
     let payments: AdminPayment[] = [];
     let leads: AdminLead[] = [];
+    let notificationConsents: Array<{ id: string; decision: string; promptType: string; source: string; email: string | null; name: string | null; createdAt: string; userId: string | null }> = [];
 
     try {
         const collection = await getTeleprompterCollection();
         const activeSince = new Date(Date.now() - 15 * 60 * 1000).toISOString();
-        const [userCount, activeUserCount, premiumUserCount, scriptCount, userRecords, scriptRecords, paymentRecords, leadRecords] = await Promise.all([
+        const [userCount, activeUserCount, premiumUserCount, scriptCount, userRecords, scriptRecords, paymentRecords, leadRecords, notificationConsentsRecords] = await Promise.all([
             collection.countDocuments({ kind: "user" }),
             collection.countDocuments({ kind: "user", lastSeenAt: { $gte: activeSince } }),
             collection.countDocuments({ kind: "user", "plan.isPremium": true }),
@@ -45,7 +46,8 @@ export default async function AdminPage() {
             collection.find({ kind: "user" }).sort({ updatedAt: -1 }).limit(100).toArray(),
             collection.find({ kind: "script" }).sort({ updatedAt: -1 }).limit(100).toArray(),
             collection.find({ kind: "payment_intent" }).sort({ createdAt: -1 }).limit(100).toArray(),
-            collection.find({ kind: "contact_lead" }).sort({ createdAt: -1 }).limit(100).toArray()
+            collection.find({ kind: "contact_lead" }).sort({ createdAt: -1 }).limit(100).toArray(),
+            collection.find({ kind: "notification_consent" }).sort({ createdAt: -1 }).limit(100).toArray()
         ]);
         registeredUsers = userCount;
         activeUsers = activeUserCount;
@@ -96,6 +98,16 @@ export default async function AdminPage() {
             createdAt: String(lead.createdAt ?? ""),
             status: String(lead.status ?? "new")
         }));
+        notificationConsents = notificationConsentsRecords.map((consent) => ({
+            id: String(consent.id ?? consent._id),
+            decision: String(consent.decision ?? "dismissed"),
+            promptType: String(consent.promptType ?? "browser_notification"),
+            source: String(consent.source ?? "landing_page"),
+            email: typeof consent.email === "string" ? consent.email : null,
+            name: typeof consent.name === "string" ? consent.name : null,
+            createdAt: String(consent.createdAt ?? ""),
+            userId: typeof consent.userId === "string" ? consent.userId : null
+        }));
     } catch (error) {
         databaseError = true;
         console.error("Admin dashboard database unavailable.", error);
@@ -143,7 +155,7 @@ export default async function AdminPage() {
                 </p>
             </section>
 
-            {!databaseError ? <AdminDataExplorer users={users} scripts={scripts} payments={payments} leads={leads} /> : null}
+            {!databaseError ? <AdminDataExplorer users={users} scripts={scripts} payments={payments} leads={leads} notificationConsents={notificationConsents} /> : null}
         </main>
     );
 }

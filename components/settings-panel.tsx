@@ -19,15 +19,11 @@ export function SettingsPanel({
 }: SettingsPanelProps) {
   return (
     <section className={embedded ? "min-w-0 overflow-hidden rounded-[14px] border border-[var(--border)] bg-[var(--surface-strong)] p-2" : "glass-panel min-w-0 overflow-hidden rounded-[16px] p-3 md:p-4"}>
-      <div className="mb-2 flex items-center justify-between gap-3">
-        <h2 className="section-kicker">Prompt controls</h2>
-      </div>
-
-      <div className="grid min-w-0 grid-cols-2 gap-2 xl:grid-cols-[minmax(120px,1fr)_minmax(120px,1fr)_auto_auto_auto] xl:items-end">
-        <label className="col-span-2 block min-w-0 xl:col-span-1">
-          <div className="mb-2 flex items-center justify-between text-sm">
+      <div className="grid min-w-0 gap-3 xl:grid-cols-[minmax(120px,1fr)_minmax(120px,1fr)_auto_auto_auto] xl:items-end">
+        <label className="block min-w-0 xl:col-span-1">
+          <div className="mb-2 flex items-center justify-between text-[10px] uppercase tracking-[0.12em] text-[var(--text-soft)]">
             <span>Speed</span>
-            <span className="text-[var(--text-soft)]">{settings.speed}px/s</span>
+            <span>{settings.speed}px/s</span>
           </div>
           <input
             type="range"
@@ -40,10 +36,10 @@ export function SettingsPanel({
           />
         </label>
 
-        <label className="col-span-2 block min-w-0 xl:col-span-1">
-          <div className="mb-2 flex items-center justify-between text-sm">
-            <span>Text size</span>
-            <span className="text-[var(--text-soft)]">{settings.fontSize}px</span>
+        <label className="block min-w-0 xl:col-span-1">
+          <div className="mb-2 flex items-center justify-between text-[10px] uppercase tracking-[0.12em] text-[var(--text-soft)]">
+            <span>Size</span>
+            <span>{settings.fontSize}px</span>
           </div>
           <input
             type="range"
@@ -58,27 +54,30 @@ export function SettingsPanel({
 
         <button
           type="button"
+          title={settings.mirrorMode ? "Mirror on" : "Mirror off"}
+          aria-label={settings.mirrorMode ? "Turn off mirrored text" : "Turn on mirrored text"}
           onClick={() => onSettingsChange({ mirrorMode: !settings.mirrorMode })}
-          className="control-chip flex min-w-0 items-center justify-center gap-2 truncate px-2 text-xs sm:text-sm xl:px-3"
+          className="control-chip inline-flex h-10 min-w-10 items-center justify-center touch-manipulation"
         >
           <MoveHorizontal className="h-4 w-4" />
-          {settings.mirrorMode ? "Mirror on" : "Mirror"}
         </button>
         <button
           type="button"
+          title={settings.mirrorCamera ? "Camera mirrored" : "Camera normal"}
+          aria-label={settings.mirrorCamera ? "Turn off camera mirror" : "Turn on camera mirror"}
           onClick={() => onSettingsChange({ mirrorCamera: !settings.mirrorCamera })}
-          className="control-chip flex min-w-0 items-center justify-center gap-2 truncate px-2 text-xs sm:text-sm xl:px-3"
+          className="control-chip inline-flex h-10 min-w-10 items-center justify-center touch-manipulation"
         >
           <Camera className="h-4 w-4" />
-          {settings.mirrorCamera ? "Camera mirror" : "Camera normal"}
         </button>
         <button
           type="button"
+          title={settings.isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+          aria-label={settings.isFullscreen ? "Exit fullscreen" : "Open fullscreen"}
           onClick={onToggleFullscreen}
-          className="control-chip col-span-2 flex min-w-0 items-center justify-center gap-2 truncate px-2 text-xs sm:text-sm xl:col-span-1 xl:px-3"
+          className="control-chip inline-flex h-10 min-w-10 items-center justify-center touch-manipulation"
         >
           {settings.isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-          {settings.isFullscreen ? "Exit" : "Fullscreen"}
         </button>
       </div>
     </section>

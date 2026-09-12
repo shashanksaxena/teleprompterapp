@@ -8,6 +8,8 @@ type InstallPromptEvent = Event & {
     userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 };
 
+const INSTALL_DISMISSED_KEY = "freeteleprompter:install-dismissed";
+
 export function InstallPrompt() {
     const [installEvent, setInstallEvent] = useState<InstallPromptEvent | null>(null);
     const [visible, setVisible] = useState(false);
@@ -22,6 +24,10 @@ export function InstallPrompt() {
         });
 
         const handleBeforeInstallPrompt = (event: Event) => {
+            if (window.sessionStorage.getItem(INSTALL_DISMISSED_KEY) === "1") {
+                return;
+            }
+
             event.preventDefault();
             setInstallEvent(event as InstallPromptEvent);
             setVisible(true);
@@ -52,8 +58,14 @@ export function InstallPrompt() {
         setVisible(false);
 
         if (choice.outcome === "dismissed") {
-            window.sessionStorage.setItem("freeteleprompter:install-dismissed", "1");
+            window.sessionStorage.setItem(INSTALL_DISMISSED_KEY, "1");
         }
+    };
+
+    const dismiss = () => {
+        window.sessionStorage.setItem(INSTALL_DISMISSED_KEY, "1");
+        setInstallEvent(null);
+        setVisible(false);
     };
 
     return (
@@ -68,7 +80,7 @@ export function InstallPrompt() {
             <button type="button" onClick={install} className="install-prompt-action">
                 Install
             </button>
-            <button type="button" onClick={() => setVisible(false)} className="install-prompt-close" aria-label="Dismiss install prompt">
+            <button type="button" onClick={dismiss} className="install-prompt-close" aria-label="Dismiss install prompt">
                 <X className="h-4 w-4" />
             </button>
         </aside>

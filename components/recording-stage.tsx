@@ -30,6 +30,8 @@ type RecordingStageProps = {
   onToggleMirrorCamera: () => void;
   onRestart: () => void;
   onTogglePlay: () => void;
+  onTogglePreview?: () => void;
+  onScriptChange?: (value: string) => void;
   onStop: () => void;
   onToggleVoice: () => void;
   onDownload: () => void;
@@ -58,6 +60,8 @@ export function RecordingStage({
   onToggleMirrorCamera,
   onRestart,
   onTogglePlay,
+  onTogglePreview,
+  onScriptChange,
   onStop,
   onToggleVoice,
   onDownload,
@@ -163,21 +167,42 @@ export function RecordingStage({
 
       {!hasStarted ? (
         <div className="absolute inset-0 z-20 flex items-center justify-center px-4">
-          <div className="w-full max-w-md rounded-[22px] border border-white/15 bg-black/60 p-5 text-center text-white shadow-[0_24px_80px_rgba(0,0,0,0.45)] sm:rounded-[28px] sm:p-6">
+          <div className="w-full max-w-lg rounded-[22px] border border-white/15 bg-black/60 p-5 text-white shadow-[0_24px_80px_rgba(0,0,0,0.45)] sm:rounded-[28px] sm:p-6">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/65">Ready to prompt</p>
             <h2 className="mt-3 text-2xl font-semibold">Frame your shot, set the speed, then begin.</h2>
             <p className="mt-3 text-sm leading-6 text-white/75">
-              Camera access is optional. Use the controls above to fine-tune the speed and layout before the script
-              begins moving.
+              Camera access is optional. Paste the script below, preview it on the teleprompter, or jump straight into
+              the take.
             </p>
-            <button
-              type="button"
-              onClick={onTogglePlay}
-              className="mt-6 inline-flex items-center gap-3 rounded-full bg-[var(--accent)] px-6 py-3 text-base font-semibold text-[var(--accent-contrast)] shadow-[0_0_0_5px_rgba(124,195,255,0.2),0_14px_34px_rgba(0,0,0,0.35)] transition hover:scale-[1.02]"
-            >
-              <Play className="h-5 w-5" />
-              Start recording
-            </button>
+
+            <label className="mt-5 block text-left text-xs font-medium uppercase tracking-[0.16em] text-white/70">
+              Paste script
+            </label>
+            <textarea
+              value={script}
+              onChange={(event) => onScriptChange?.(event.target.value)}
+              rows={5}
+              placeholder="Paste your script here..."
+              className="mt-2 w-full resize-none rounded-2xl border border-white/15 bg-white/5 px-3 py-3 text-sm text-white placeholder:text-white/45 outline-none ring-0 transition focus:border-[var(--accent)] focus:bg-white/8"
+            />
+
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={onTogglePreview}
+                className="inline-flex flex-1 items-center justify-center rounded-full border border-white/20 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+              >
+                Preview
+              </button>
+              <button
+                type="button"
+                onClick={onTogglePlay}
+                className="inline-flex flex-1 items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-4 py-3 text-sm font-semibold text-[var(--accent-contrast)] shadow-[0_0_0_5px_rgba(124,195,255,0.2),0_14px_34px_rgba(0,0,0,0.35)] transition hover:scale-[1.02]"
+              >
+                <Play className="h-4 w-4" />
+                Start recording
+              </button>
+            </div>
           </div>
         </div>
       ) : null}

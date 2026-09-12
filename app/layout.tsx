@@ -3,7 +3,9 @@ import type { Metadata, Viewport } from "next";
 import { AdSenseLoader } from "@/components/adsense-loader";
 import { Analytics, GoogleTagManagerNoScript } from "@/components/analytics";
 import { AuthProvider } from "@/components/auth-provider";
+import { GoogleLoginPrompt } from "@/components/google-login-prompt";
 import { InstallPrompt } from "@/components/install-prompt";
+import { NotificationPermissionPrompt, NotificationSettingsControl } from "@/components/notification-permission";
 import { StructuredData } from "@/components/structured-data";
 import { SiteNavigation } from "@/components/site-navigation";
 import { SiteFooter } from "@/components/site-footer";
@@ -113,6 +115,9 @@ export default function RootLayout({
           <SiteNavigation />
           <ThemeSelector />
           <InstallPrompt />
+          <NotificationPermissionPrompt />
+          <GoogleLoginPrompt />
+          <NotificationSettingsControl />
           {children}
           <SiteFooter />
         </AuthProvider>
