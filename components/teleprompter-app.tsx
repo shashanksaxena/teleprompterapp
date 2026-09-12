@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { signIn, useSession } from "next-auth/react";
 
-import { AdSlot } from "@/components/ad-slot";
 import { AppHeader } from "@/components/app-header";
 import { ControlBar } from "@/components/control-bar";
 import { DownloadGateModal } from "@/components/download-gate-modal";
@@ -17,8 +16,7 @@ import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useRecorder } from "@/hooks/use-recorder";
 import { useSpeechScroll } from "@/hooks/use-speech-scroll";
 import { useTeleprompter } from "@/hooks/use-teleprompter";
-import { ADSENSE_CLIENT, ADSENSE_SLOT_BOTTOM } from "@/lib/adsense";
-import { DEFAULT_SETTINGS, DEFAULT_SCRIPT, FREE_SCRIPT_LIMIT, STORAGE_KEYS } from "@/lib/constants";
+import { DEFAULT_SETTINGS, DEFAULT_SCRIPT, DEMO_SCRIPT, FREE_SCRIPT_LIMIT, STORAGE_KEYS } from "@/lib/constants";
 import { trackEvent } from "@/lib/analytics";
 import { AppSettings, SavedScript, UserPlan } from "@/lib/types";
 import { createId, downloadBlob } from "@/lib/utils";
@@ -34,10 +32,9 @@ export function TeleprompterApp() {
   const [isStageMode, setIsStageMode] = useState(false);
   const [stageHasStarted, setStageHasStarted] = useState(false);
   const [pendingDownload, setPendingDownload] = useState(false);
+  const [pendingAudioDownload, setPendingAudioDownload] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
-  const adsenseClient = ADSENSE_CLIENT;
-  const adsenseSlotBottom = ADSENSE_SLOT_BOTTOM;
 
   const teleprompter = useTeleprompter({
     speed: settingsStore.value.speed
@@ -72,6 +69,22 @@ export function TeleprompterApp() {
       document.body.style.overflow = "";
     };
   }, [isStageMode]);
+
+  useEffect(() => {
+    const stopWhenLeaving = () => {
+      if (document.visibilityState === "hidden" || !document.hasFocus()) {
+        teleprompter.pause();
+        recorder.stop();
+      }
+    };
+
+    document.addEventListener("visibilitychange", stopWhenLeaving);
+    window.addEventListener("pagehide", stopWhenLeaving);
+    return () => {
+      document.removeEventListener("visibilitychange", stopWhenLeaving);
+      window.removeEventListener("pagehide", stopWhenLeaving);
+    };
+  }, [recorder.stop, teleprompter.pause]);
 
   useEffect(() => {
     if (status !== "authenticated") {
@@ -263,7 +276,7 @@ export function TeleprompterApp() {
   };
 
   const handleLoadDemoScript = () => {
-    draftStore.setValue(DEFAULT_SCRIPT);
+    draftStore.setValue(DEMO_SCRIPT);
     setScriptTitle("Welcome Demo");
     teleprompter.restart();
     trackEvent("load_demo_script");
@@ -300,7 +313,7 @@ export function TeleprompterApp() {
   const handleTogglePlayback = async () => {
     if (teleprompter.isPlaying) {
       teleprompter.pause();
-      recorder.stop();
+      recorder.pause();
       trackEvent("pause_teleprompter", {
         progress_percent: Math.round(teleprompter.progress * 100)
       });
@@ -308,28 +321,29 @@ export function TeleprompterApp() {
     }
 
     if (!isStageMode) {
-      const started = await recorder.start();
+      const started = await recorder.start(false);
       if (!started) {
         return;
       }
 
       teleprompter.restart();
       teleprompter.measure();
-      setStageHasStarted(false);
+      setStageHasStarted(true);
       setIsStageMode(true);
       trackEvent("recording_started", {
-        camera: Boolean(recorder.liveStream)
+        camera: true
       });
       return;
     }
 
     if (!recorder.isRecording) {
-      const restarted = await recorder.start();
+      const restarted = await recorder.start(true);
       if (!restarted) {
         return;
       }
     }
 
+    recorder.resume();
     setStageHasStarted(true);
     teleprompter.measure();
     teleprompter.play();
@@ -422,7 +436,19 @@ export function TeleprompterApp() {
       return;
     }
 
+    if (status !== "authenticated") {
+      setPendingAudioDownload(true);
+      setDownloadModalOpen(true);
+      return;
+    }
+
+    if (!(await authorizeDownload())) {
+      setPendingAudioDownload(true);
+      return;
+    }
+
     downloadBlob(recorder.audioBlob, `freeteleprompter-camera-off-${Date.now()}.mp3`);
+    setPendingAudioDownload(false);
     trackEvent("download_audio_track", {
       plan: activePlan.name.toLowerCase()
     });
@@ -541,7 +567,17 @@ export function TeleprompterApp() {
         ) : null}
         {!isStageMode ? (
           <section className="glass-panel min-w-0 overflow-hidden rounded-[18px] p-4 md:p-5">
-            <div className="grid min-w-0 gap-3 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+            <ScriptEditor
+              script={draftStore.value}
+              onScriptChange={draftStore.setValue}
+              onSaveScript={handleSaveScript}
+              saveDisabled={!draftStore.value.trim() || (status === "authenticated" && !canSaveMore)}
+              saveLabel={status === "authenticated" ? "Save script" : "Sign in to save"}
+              onClearScript={handleClearScript}
+              onLoadDemoScript={handleLoadDemoScript}
+            />
+
+            <div className="mt-3 min-w-0 space-y-3">
               <div className="min-w-0">
                 <p className="section-kicker mb-3">Session controls</p>
                 <ControlBar
@@ -568,16 +604,6 @@ export function TeleprompterApp() {
             </div>
           </section>
         ) : null}
-
-        <ScriptEditor
-          script={draftStore.value}
-          onScriptChange={draftStore.setValue}
-          onSaveScript={handleSaveScript}
-          saveDisabled={!draftStore.value.trim() || (status === "authenticated" && !canSaveMore)}
-          saveLabel={status === "authenticated" ? "Save script" : "Sign in to save"}
-          onClearScript={handleClearScript}
-          onLoadDemoScript={handleLoadDemoScript}
-        />
 
         <div className="grid gap-4 lg:grid-cols-2">
           <SavedScriptsPanel
@@ -749,20 +775,6 @@ export function TeleprompterApp() {
         </div>
       </footer>
 
-      {!activePlan.isPremium ? (
-        <section className="glass-panel rounded-[18px] p-4 md:p-5">
-          <div className="mb-3">
-            <p className="section-kicker">Recommended content</p>
-            <h2 className="mt-2 text-base font-semibold">More creator resources from FreeTeleprompter.in</h2>
-            <p className="mt-2 text-sm text-[var(--text-soft)]">
-              This section is reserved for related teleprompter and creator resources. The multiplex unit below is
-              placed after substantial product content rather than interrupting the main tool workflow.
-            </p>
-          </div>
-          <AdSlot client={adsenseClient} slot={adsenseSlotBottom} format="autorelaxed" className="min-h-[280px]" />
-        </section>
-      ) : null}
-
       <DownloadGateModal
         open={downloadModalOpen}
         onClose={() => setDownloadModalOpen(false)}
@@ -771,6 +783,9 @@ export function TeleprompterApp() {
         onSubscriptionActivated={() => {
           setPremiumUnlocked(true);
           setDownloadModalOpen(false);
+          if (pendingAudioDownload) {
+            void handleDownloadAudio();
+          }
           trackEvent("activate_premium_subscription", {
             source: "upi_confirmation"
           });

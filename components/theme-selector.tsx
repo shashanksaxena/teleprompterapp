@@ -50,22 +50,20 @@ export function ThemeSelector() {
                 aria-label="Use light theme"
                 aria-pressed={theme === "light"}
                 onClick={() => selectTheme("light")}
-                className={`inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-sm font-medium transition ${theme === "light" ? "bg-[var(--accent)] text-[var(--accent-contrast)]" : "text-[var(--text-soft)] hover:text-[var(--text)]"
+                className={`inline-flex h-9 w-9 items-center justify-center rounded-full text-sm font-medium transition ${theme === "light" ? "bg-[var(--accent)] text-[var(--accent-contrast)]" : "text-[var(--text-soft)] hover:text-[var(--text)]"
                     }`}
             >
                 <SunMedium className="h-4 w-4" />
-                <span className="hidden sm:inline">Light</span>
             </button>
             <button
                 type="button"
                 aria-label="Use dark theme"
                 aria-pressed={theme === "dark"}
                 onClick={() => selectTheme("dark")}
-                className={`inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-sm font-medium transition ${theme === "dark" ? "bg-[var(--accent)] text-[var(--accent-contrast)]" : "text-[var(--text-soft)] hover:text-[var(--text)]"
+                className={`inline-flex h-9 w-9 items-center justify-center rounded-full text-sm font-medium transition ${theme === "dark" ? "bg-[var(--accent)] text-[var(--accent-contrast)]" : "text-[var(--text-soft)] hover:text-[var(--text)]"
                     }`}
             >
                 <MoonStar className="h-4 w-4" />
-                <span className="hidden sm:inline">Dark</span>
             </button>
         </div>
     );

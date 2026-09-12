@@ -48,6 +48,7 @@ export function useSpeechScroll({ onAdvance }: UseSpeechScrollOptions) {
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
   const enabledRef = useRef(false);
   const recognitionCtorRef = useRef<(new () => SpeechRecognitionInstance) | null>(null);
+  const transcriptLengthRef = useRef(0);
 
   const stop = useCallback(() => {
     enabledRef.current = false;
@@ -66,17 +67,20 @@ export function useSpeechScroll({ onAdvance }: UseSpeechScrollOptions) {
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = "en-US";
+    transcriptLengthRef.current = 0;
 
     recognition.onresult = (event) => {
-      let transcriptSize = 0;
+      let transcriptLength = 0;
 
-      for (let index = event.resultIndex; index < event.results.length; index += 1) {
-        transcriptSize += event.results[index][0].transcript.trim().length;
+      for (let index = 0; index < event.results.length; index += 1) {
+        transcriptLength += event.results[index][0].transcript.trim().length;
       }
 
-      if (transcriptSize > 0) {
-        const advanceBy = Math.max(24, transcriptSize * 2.2);
-        onAdvance(advanceBy);
+      const newlyHeardCharacters = transcriptLength - transcriptLengthRef.current;
+      transcriptLengthRef.current = transcriptLength;
+
+      if (newlyHeardCharacters > 0) {
+        onAdvance(newlyHeardCharacters * 1.55);
       }
     };
 

@@ -83,7 +83,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     dateModified: article.dateModified,
     author: {
       "@type": "Person",
-      name: siteConfig.author
+      name: siteConfig.author,
+      url: "https://www.linkedin.com/in/shashanksaxena18/"
     },
     publisher: {
       "@type": "Organization",
@@ -113,11 +114,19 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             <p className="mt-3 max-w-3xl text-sm leading-7 text-[var(--text-soft)] md:text-base">{article.intro}</p>
             <div className="mt-4 flex flex-wrap gap-3 text-sm text-[var(--text-soft)]">
               <span>{article.readingTime}</span>
-              <span>{article.datePublished}</span>
+              <time dateTime={article.datePublished}>{article.datePublished}</time>
+              <a
+                href="https://www.linkedin.com/in/shashanksaxena18/"
+                target="_blank"
+                rel="noreferrer"
+                className="underline-offset-4 hover:underline"
+              >
+                By Shashank Saxena
+              </a>
               <Link href="/articles" className="underline-offset-4 hover:underline">
                 More articles
               </Link>
-              <Link href="/" className="underline-offset-4 hover:underline">
+              <Link href="/" className="cta-primary inline-flex items-center">
                 Open teleprompter
               </Link>
             </div>

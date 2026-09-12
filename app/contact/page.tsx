@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { ContentPage } from "@/components/content-page";
+import { ContactForm } from "@/components/contact-form";
 import { createPageMetadata } from "@/lib/page-metadata";
 import { siteConfig } from "@/lib/site";
 
@@ -18,6 +19,7 @@ export default function ContactPage() {
       kicker="Contact"
       title="Contact FreeTeleprompter.in"
       intro="If you want to report a bug, suggest a feature, discuss partnerships, or ask a product question, this page explains the best way to reach the team behind FreeTeleprompter.in."
+      beforeContent={<ContactForm />}
       sections={[
         {
           heading: "Product feedback",

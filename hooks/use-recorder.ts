@@ -165,7 +165,7 @@ export function useRecorder() {
     setIsRecording(false);
   }, [cleanupStream, clearTimer]);
 
-  const start = useCallback(async () => {
+  const start = useCallback(async (recordImmediately = true) => {
     if (typeof window === "undefined") {
       return false;
     }
@@ -205,13 +205,16 @@ export function useRecorder() {
       let stream: MediaStream;
       let cameraOff = false;
 
-      if (navigator.mediaDevices?.getUserMedia) {
+      if (hasLiveMediaStream && streamRef.current) {
+        stream = streamRef.current;
+      } else if (navigator.mediaDevices?.getUserMedia) {
         try {
           stream = await navigator.mediaDevices.getUserMedia({
             video: {
               facingMode: "user",
-              width: { ideal: 1280 },
-              height: { ideal: 720 }
+              width: { ideal: 3840 },
+              height: { ideal: 2160 },
+              frameRate: { ideal: 30, max: 60 }
             },
             audio: true
           });
@@ -224,6 +227,13 @@ export function useRecorder() {
         stream = createFallbackStream();
         cameraOff = true;
         setError("Camera access is unavailable. A camera-free video will be created instead.");
+      }
+
+      streamRef.current = stream;
+      setLiveStream(stream);
+
+      if (!recordImmediately) {
+        return true;
       }
 
       if (cameraOff && navigator.mediaDevices?.getUserMedia) {
@@ -256,9 +266,6 @@ export function useRecorder() {
 
       const mimeType = getSupportedMimeType();
       const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
-
-      streamRef.current = stream;
-      setLiveStream(stream);
 
       recorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -378,6 +385,25 @@ export function useRecorder() {
     recordingDurationSeconds,
     error,
     start,
-    stop
+    stop,
+    pause: () => {
+      if (recorderRef.current?.state === "recording") {
+        recorderRef.current.pause();
+        audioRecorderRef.current?.pause();
+        clearTimer();
+      }
+    },
+    resume: () => {
+      if (recorderRef.current?.state === "paused") {
+        recorderRef.current.resume();
+        audioRecorderRef.current?.resume();
+        startTimeRef.current = performance.now() - elapsedSeconds * 1000;
+        timerRef.current = window.setInterval(() => {
+          if (startTimeRef.current) {
+            setElapsedSeconds(Math.max(0, Math.floor((performance.now() - startTimeRef.current) / 1000)));
+          }
+        }, 250);
+      }
+    }
   };
 }

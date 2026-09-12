@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 
+import { ArticleList } from "@/components/article-list";
 import { completeArticles } from "@/lib/articles";
 import { createPageMetadata } from "@/lib/page-metadata";
 
@@ -32,7 +32,7 @@ export default function ArticlesPage() {
           and making voice-assisted teleprompter scrolling feel natural.
         </p>
         <div className="mt-4 flex flex-wrap gap-3 text-sm text-[var(--text-soft)]">
-          <Link href="/" className="underline-offset-4 hover:underline">
+          <Link href="/" className="cta-primary inline-flex items-center">
             Open teleprompter
           </Link>
           <Link href="/how-to-use" className="underline-offset-4 hover:underline">
@@ -44,30 +44,7 @@ export default function ArticlesPage() {
         </div>
       </header>
 
-      <section className="grid gap-4 md:grid-cols-2">
-        {completeArticles.map((article) => (
-          <Link
-            key={article.slug}
-            href={`/articles/${article.slug}`}
-            className="glass-panel group overflow-hidden rounded-[18px] transition hover:-translate-y-0.5 hover:border-[var(--accent)]"
-          >
-            <Image
-              src={article.image}
-              alt={article.imageAlt}
-              width={1672}
-              height={941}
-              className="aspect-[16/9] w-full object-cover"
-            />
-            <div className="p-5">
-              <p className="section-kicker">{article.readingTime}</p>
-              <h2 className="mt-2 text-xl font-semibold leading-tight group-hover:text-[var(--accent)]">
-                {article.title}
-              </h2>
-              <p className="mt-3 text-sm leading-6 text-[var(--text-soft)]">{article.description}</p>
-            </div>
-          </Link>
-        ))}
-      </section>
+      <ArticleList articles={completeArticles} />
     </main>
   );
 }

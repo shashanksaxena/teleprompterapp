@@ -6,6 +6,7 @@ import { AuthProvider } from "@/components/auth-provider";
 import { InstallPrompt } from "@/components/install-prompt";
 import { StructuredData } from "@/components/structured-data";
 import { SiteNavigation } from "@/components/site-navigation";
+import { SiteFooter } from "@/components/site-footer";
 import { ThemeSelector } from "@/components/theme-selector";
 import { ADSENSE_CLIENT } from "@/lib/adsense";
 import { getSiteUrl, siteConfig } from "@/lib/site";
@@ -113,6 +114,7 @@ export default function RootLayout({
           <ThemeSelector />
           <InstallPrompt />
           {children}
+          <SiteFooter />
         </AuthProvider>
       </body>
     </html>

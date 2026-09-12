@@ -17,10 +17,10 @@ export function DownloadGateModal({ open, onClose, onDownload, recordingReady, o
     const [message, setMessage] = useState<string | null>(null);
     if (!open) return null;
     const isAuthenticated = status === "authenticated";
-    const title = isAuthenticated ? "Your first 3 video downloads are free" : "Get your first 3 video downloads free";
+    const title = isAuthenticated ? "Your first 3 downloads are free" : "Get your first 3 downloads free";
     const intro = isAuthenticated
-        ? "You've used all 3 free downloads. Upgrade to Pro for unlimited video downloads at ₹49/month."
-        : "Sign in to use your 3 free video downloads, then upgrade only when you need unlimited downloads.";
+        ? "You've used all 3 free downloads. Upgrade to Pro for unlimited video and MP3 downloads at ₹49/month."
+        : "Sign in to use your 3 free video or MP3 downloads, then upgrade only when you need unlimited downloads.";
 
     const startPayment = async () => {
         setLoading(true); setMessage(null);
@@ -86,7 +86,7 @@ export function DownloadGateModal({ open, onClose, onDownload, recordingReady, o
                     ) : (
                         <>
                             <div className="rounded-2xl border border-[var(--accent)]/25 bg-[var(--accent-soft)] p-4">
-                                <div className="flex items-start gap-3"><CreditCard className="mt-0.5 h-5 w-5 text-[var(--accent)]" /><div><h3 className="font-semibold">Pro monthly subscription</h3><p className="mt-1 text-sm leading-6 text-[var(--text-soft)]">Unlimited video downloads for ₹49/month.</p></div></div>
+                                <div className="flex items-start gap-3"><CreditCard className="mt-0.5 h-5 w-5 text-[var(--accent)]" /><div><h3 className="font-semibold">Pro monthly subscription</h3><p className="mt-1 text-sm leading-6 text-[var(--text-soft)]">Unlimited video and MP3 downloads for ₹49/month.</p></div></div>
                             </div>
                             <button type="button" onClick={startPayment} disabled={loading} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-4 text-sm font-semibold text-[var(--accent-contrast)] shadow-[0_14px_28px_rgba(59,130,246,0.24)] disabled:opacity-60">{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}{loading ? "Opening secure checkout..." : "Upgrade to Pro - ₹49/month"}</button>
                             {message ? <p className="text-sm text-rose-500">{message}</p> : null}

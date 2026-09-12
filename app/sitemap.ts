@@ -157,6 +157,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.7
     },
+    ...[
+      "script-timer",
+      "word-counter",
+      "speed-calculator",
+      "script-formatter",
+      "script-generator"
+    ].map((tool) => ({
+      url: `${siteUrl}/creator-tools/${tool}`,
+      lastModified: pageLastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.8
+    })),
     {
       url: `${siteUrl}/articles`,
       lastModified: pageLastModified,

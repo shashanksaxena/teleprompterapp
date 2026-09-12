@@ -105,6 +105,7 @@ export function RecordingStage({
             loop
             playsInline
             controlsList="nodownload noplaybackrate noremoteplayback"
+            onContextMenu={(event) => event.preventDefault()}
             disablePictureInPicture
             disableRemotePlayback
             className="stage-video h-full w-full object-cover"
@@ -172,10 +173,10 @@ export function RecordingStage({
             <button
               type="button"
               onClick={onTogglePlay}
-              className="mt-6 inline-flex items-center gap-3 rounded-full bg-white px-6 py-3 text-base font-semibold text-black transition hover:scale-[1.01]"
+              className="mt-6 inline-flex items-center gap-3 rounded-full bg-[var(--accent)] px-6 py-3 text-base font-semibold text-[var(--accent-contrast)] shadow-[0_0_0_5px_rgba(124,195,255,0.2),0_14px_34px_rgba(0,0,0,0.35)] transition hover:scale-[1.02]"
             >
               <Play className="h-5 w-5" />
-              Start teleprompter
+              Start recording
             </button>
           </div>
         </div>

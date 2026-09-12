@@ -1,7 +1,7 @@
 import { AppSettings, SavedScript, UserPlan } from "@/lib/types";
 
 export const STORAGE_KEYS = {
-  draft: "freeteleprompter:draft",
+  draft: "freeteleprompter:draft:v2",
   savedScripts: "freeteleprompter:saved-scripts",
   settings: "freeteleprompter:settings",
   plan: "freeteleprompter:plan"
@@ -10,15 +10,11 @@ export const STORAGE_KEYS = {
 export const FREE_SCRIPT_LIMIT = 3;
 export const FREE_DOWNLOAD_LIMIT = 3;
 
-export const DEFAULT_SCRIPT = `Welcome to FreeTeleprompter.in.
+export const DEFAULT_SCRIPT = "";
 
-Record better videos without memorizing every line. This browser-based teleprompter helps creators, educators, founders, and video teams stay natural on camera.
+export const DEMO_SCRIPT = `Welcome to FreeTeleprompter.in.
 
-Paste your script, adjust the reading speed, switch themes, and enable mirror mode when your camera setup needs reversed text.
-
-For a more natural pace, turn on voice-controlled scrolling. The prompt follows your speech while you focus on the delivery.
-
-When you are ready, start the camera, record your take, review it, and download the video.`;
+Record better videos without memorizing every line. Paste your own script here, adjust the reading speed, and start recording when you are ready.`;
 
 export const DEFAULT_SETTINGS: AppSettings = {
   speed: 36,

@@ -17,6 +17,8 @@ export function useTeleprompter({ speed }: UseTeleprompterOptions) {
   const intervalRef = useRef<number | null>(null);
   const lastTickRef = useRef<number | null>(null);
   const maxOffsetRef = useRef(0);
+  const voiceDeltaRef = useRef(0);
+  const voiceFrameRef = useRef<number | null>(null);
   const [offset, setOffset] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -48,15 +50,29 @@ export function useTeleprompter({ speed }: UseTeleprompterOptions) {
     });
   }, []);
 
-  const applyDelta = useCallback((delta: number) => {
-    const maxOffset = maxOffsetRef.current;
+  const animateVoiceScroll = useCallback(() => {
+    voiceFrameRef.current = null;
+    if (voiceDeltaRef.current <= 0 || maxOffsetRef.current <= 0) {
+      voiceDeltaRef.current = 0;
+      return;
+    }
 
+    const step = Math.min(voiceDeltaRef.current * 0.2, 5);
+    voiceDeltaRef.current -= step;
     setOffset((current) => {
-      const next = clamp(current + delta, 0, maxOffset);
-      setProgress(maxOffset > 0 ? next / maxOffset : 0);
+      const next = clamp(current + step, 0, maxOffsetRef.current);
+      setProgress(maxOffsetRef.current > 0 ? next / maxOffsetRef.current : 0);
       return next;
     });
+    voiceFrameRef.current = window.requestAnimationFrame(animateVoiceScroll);
   }, []);
+
+  const applyDelta = useCallback((delta: number) => {
+    voiceDeltaRef.current = Math.min(voiceDeltaRef.current + delta, maxOffsetRef.current * 0.18);
+    if (voiceFrameRef.current === null) {
+      voiceFrameRef.current = window.requestAnimationFrame(animateVoiceScroll);
+    }
+  }, [animateVoiceScroll]);
 
   const tick = useCallback(() => {
     const now = performance.now();
@@ -119,6 +135,12 @@ export function useTeleprompter({ speed }: UseTeleprompterOptions) {
 
   useEffect(() => stopLoop, [stopLoop]);
 
+  useEffect(() => () => {
+    if (voiceFrameRef.current !== null) {
+      window.cancelAnimationFrame(voiceFrameRef.current);
+    }
+  }, []);
+
   const controls = useMemo(
     () => ({
       play: () => {
@@ -129,6 +151,11 @@ export function useTeleprompter({ speed }: UseTeleprompterOptions) {
       toggle: () => setIsPlaying((current) => !current),
       restart: () => {
         setIsPlaying(false);
+        voiceDeltaRef.current = 0;
+        if (voiceFrameRef.current !== null) {
+          window.cancelAnimationFrame(voiceFrameRef.current);
+          voiceFrameRef.current = null;
+        }
         setOffset(0);
         setProgress(0);
       },

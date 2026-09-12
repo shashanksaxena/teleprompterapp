@@ -19,6 +19,8 @@ type ContentPageProps = {
     href: string;
     label: string;
   }[];
+  beforeContent?: React.ReactNode;
+  afterContent?: React.ReactNode;
 };
 
 export function ContentPage({
@@ -28,7 +30,9 @@ export function ContentPage({
   sections,
   useCases,
   faqs,
-  relatedLinks
+  relatedLinks,
+  beforeContent,
+  afterContent
 }: ContentPageProps) {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-[960px] flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
@@ -36,18 +40,20 @@ export function ContentPage({
         <p className="section-kicker">{kicker}</p>
         <h1 className="mt-2 text-3xl font-semibold leading-tight md:text-4xl">{title}</h1>
         <p className="mt-3 max-w-3xl text-sm leading-7 text-[var(--text-soft)] md:text-base">{intro}</p>
-        <div className="mt-4 flex flex-wrap gap-3 text-sm text-[var(--text-soft)]">
-          <Link href="/teleprompter-app" className="underline-offset-4 hover:underline">
+        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-[var(--text-soft)]">
+          <Link href="/" className="cta-primary inline-flex items-center">
             Open teleprompter
           </Link>
-          <Link href="/how-to-use" className="underline-offset-4 hover:underline">
+          <Link href="/how-to-use" className="cta-secondary inline-flex items-center">
             How to use
           </Link>
-          <Link href="/contact" className="underline-offset-4 hover:underline">
+          <Link href="/contact" className="cta-secondary inline-flex items-center">
             Contact
           </Link>
         </div>
       </header>
+
+      {beforeContent}
 
       <section className="glass-panel rounded-[18px] p-5 md:p-6">
         <div className="space-y-6">
@@ -110,6 +116,8 @@ export function ContentPage({
         </section>
       ) : null}
 
+      {afterContent}
+
       <section className="glass-panel rounded-[18px] p-5 md:p-6">
         <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
           <div>
@@ -124,7 +132,7 @@ export function ContentPage({
             </p>
           </div>
           <div className="text-sm text-[var(--text-soft)]">
-            <Link href="/" className="underline-offset-4 hover:underline">
+            <Link href="/" className="cta-primary inline-flex items-center">
               Open teleprompter tool
             </Link>
           </div>

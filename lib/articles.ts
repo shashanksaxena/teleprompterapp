@@ -1077,6 +1077,16 @@ const additionalArticleTopics = [
   ["teleprompter-for-online-courses", "Teleprompter for Online Courses: Script and Lesson Planning", "Create clear course videos with lesson cues, examples, recap points, and natural teaching transitions.", ["teleprompter for online courses", "course video teleprompter"]],
   ["teleprompter-for-business-presentations", "Teleprompter for Business Presentations and Product Demos", "Use concise prompts for business presentations, product demos, stakeholder updates, and sales videos.", ["business presentation teleprompter", "product demo teleprompter"]],
   ["teleprompter-privacy-camera-permissions", "Teleprompter Privacy: Camera Permissions, Local Drafts, and Recording", "Understand camera permissions, local drafts, microphone access, and privacy choices when using a browser teleprompter.", ["teleprompter privacy", "camera permission teleprompter"]]
+  , ["gain-more-viewers-instagram-youtube", "How to Gain More Viewers on Instagram and YouTube", "Use stronger hooks, clearer teleprompter scripts, better retention patterns, and consistent publishing habits to gain more viewers on Instagram and YouTube.", ["gain more viewers Instagram YouTube", "get more video views", "social media video strategy"]]
+  , ["viral-video-settings-youtube-instagram", "Best Video Settings for YouTube and Instagram Content", "Choose practical resolution, frame rate, lighting, audio, framing, and export settings that give YouTube and Instagram videos a polished starting point.", ["best video settings YouTube Instagram", "viral video settings", "Instagram video quality"]]
+  , ["instagram-reels-hook-formula", "Instagram Reels Hook Formulas That Keep Viewers Watching", "Write short teleprompter-ready hooks for Instagram Reels that create curiosity, promise a useful result, and make the first three seconds count.", ["Instagram Reels hook formulas", "Reels hooks", "short form video hooks"]]
+  , ["youtube-retention-script-structure", "YouTube Script Structure for Better Audience Retention", "Plan YouTube intros, open loops, chapters, examples, and calls to action with a teleprompter script structure built around audience retention.", ["YouTube audience retention script", "YouTube script structure", "video retention tips"]]
+  , ["content-calendar-for-video-creators", "A Practical Content Calendar for Instagram and YouTube Creators", "Build a repeatable content calendar with content pillars, filming batches, teleprompter scripts, repurposing ideas, and simple performance reviews.", ["content calendar Instagram YouTube", "creator content plan", "video publishing schedule"]]
+  , ["lighting-and-audio-for-viral-videos", "Lighting and Audio Tips for Better Social Media Videos", "Improve viewer retention with clean audio, flattering light, stable framing, and teleprompter positioning for Instagram Reels and YouTube videos.", ["lighting and audio for videos", "social media video quality", "better YouTube audio"]]
+  , ["teleprompter-script-for-storytelling", "How to Write Storytelling Scripts for YouTube and Reels", "Use a teleprompter to deliver stories with a clear hook, tension, detail, payoff, and natural pauses without sounding memorized.", ["storytelling script YouTube", "Reels storytelling", "teleprompter storytelling"]]
+  , ["youtube-thumbnail-title-script-match", "Match Your YouTube Title, Thumbnail, and Video Script", "Create a stronger viewer experience by aligning the promise in your YouTube title and thumbnail with the opening lines of your teleprompter script.", ["YouTube title thumbnail script", "YouTube click through rate", "video packaging"]]
+  , ["instagram-hashtags-captions-video", "Instagram Captions and Hashtags That Support Video Reach", "Pair strong Instagram video delivery with useful captions, focused hashtags, searchable phrases, and calls to action that invite meaningful engagement.", ["Instagram captions hashtags video", "Instagram SEO", "Reels caption strategy"]]
+  , ["analyze-video-performance-improve", "How to Analyze Video Performance and Improve Your Next Take", "Use audience retention, watch time, saves, comments, and click-through signals to improve your next YouTube or Instagram video script and recording.", ["analyze video performance", "improve YouTube videos", "Instagram insights strategy"]]
 ] as const;
 
 const additionalArticles: Article[] = additionalArticleTopics.map(([slug, title, description, keywords]) => ({
@@ -1095,21 +1105,24 @@ const additionalArticles: Article[] = additionalArticleTopics.map(([slug, title,
       heading: "Start with a script designed for speaking",
       paragraphs: [
         "A teleprompter works best with short speaking blocks rather than dense paragraphs. Write one idea per block, add headings for major transitions, and leave space where you naturally breathe or pause.",
-        "Read the draft aloud before recording. Rewrite sentences that feel formal, complicated, or unlike the way you normally explain the idea to another person."
+        "Read the draft aloud before recording. Rewrite sentences that feel formal, complicated, or unlike the way you normally explain the idea to another person.",
+        `For ${title}, keep the opening promise specific and useful. A viewer should understand the topic quickly, while the rest of the script should give them a reason to continue watching.`
       ]
     },
     {
       heading: "Tune the setup with a short test",
       paragraphs: [
         "Place the prompt as close to the camera lens as possible, choose a font size you can read without squinting, and begin with a slower scroll speed than your silent reading pace.",
-        "Record a short test and change one setting at a time. Review eye-line, audio, pacing, and the first sentence before recording the full take."
+        "Record a short test and change one setting at a time. Review eye-line, audio, pacing, and the first sentence before recording the full take.",
+        "Check the first three seconds especially carefully. Remove long greetings, place the main idea close to the start, and use a readable prompt position so your delivery feels direct rather than distracted."
       ]
     },
     {
       heading: "Keep the delivery useful and natural",
       paragraphs: [
         "Use the prompt as a support system, not a reason to read every word mechanically. Look at the lens between short lines, emphasize important phrases, and allow the audience time to follow your point.",
-        "If you lose your place, pause and continue from the next heading. A calm recovery is less distracting than speeding up to catch the text."
+        "If you lose your place, pause and continue from the next heading. A calm recovery is less distracting than speeding up to catch the text.",
+        "After publishing, compare the promise of the script with the moments where viewers leave. Use that evidence to shorten slow sections, strengthen transitions, and make the next recording more useful instead of relying on guesswork."
       ]
     }
   ],
@@ -1137,7 +1150,10 @@ const additionalArticles: Article[] = additionalArticleTopics.map(([slug, title,
   ]
 }));
 
-export const completeArticles = [...articles, ...additionalArticles];
+export const completeArticles = [...additionalArticles, ...articles].sort((first, second) => {
+  const dateDifference = new Date(second.datePublished).getTime() - new Date(first.datePublished).getTime();
+  return dateDifference || second.dateModified.localeCompare(first.dateModified);
+});
 
 export function getArticle(slug: string) {
   return completeArticles.find((article) => article.slug === slug);

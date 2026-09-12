@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 
 import { authOptions } from "@/auth";
 import { AdminDataExplorer } from "@/components/admin-data-explorer";
-import type { AdminPayment, AdminScript, AdminUser } from "@/components/admin-data-explorer";
+import type { AdminLead, AdminPayment, AdminScript, AdminUser } from "@/components/admin-data-explorer";
 import { getTeleprompterCollection } from "@/lib/mongodb";
 
 export const metadata: Metadata = {
@@ -32,18 +32,20 @@ export default async function AdminPage() {
     let users: AdminUser[] = [];
     let scripts: AdminScript[] = [];
     let payments: AdminPayment[] = [];
+    let leads: AdminLead[] = [];
 
     try {
         const collection = await getTeleprompterCollection();
         const activeSince = new Date(Date.now() - 15 * 60 * 1000).toISOString();
-        const [userCount, activeUserCount, premiumUserCount, scriptCount, userRecords, scriptRecords, paymentRecords] = await Promise.all([
+        const [userCount, activeUserCount, premiumUserCount, scriptCount, userRecords, scriptRecords, paymentRecords, leadRecords] = await Promise.all([
             collection.countDocuments({ kind: "user" }),
             collection.countDocuments({ kind: "user", lastSeenAt: { $gte: activeSince } }),
             collection.countDocuments({ kind: "user", "plan.isPremium": true }),
             collection.countDocuments({ kind: "script" }),
             collection.find({ kind: "user" }).sort({ updatedAt: -1 }).limit(100).toArray(),
             collection.find({ kind: "script" }).sort({ updatedAt: -1 }).limit(100).toArray(),
-            collection.find({ kind: "payment_intent" }).sort({ createdAt: -1 }).limit(100).toArray()
+            collection.find({ kind: "payment_intent" }).sort({ createdAt: -1 }).limit(100).toArray(),
+            collection.find({ kind: "contact_lead" }).sort({ createdAt: -1 }).limit(100).toArray()
         ]);
         registeredUsers = userCount;
         activeUsers = activeUserCount;
@@ -83,6 +85,16 @@ export default async function AdminPage() {
             nextBillingAt: typeof payment.nextBillingAt === "string" ? payment.nextBillingAt : null,
             providerPaymentId: typeof payment.providerPaymentId === "string" ? payment.providerPaymentId : null,
             providerSubscriptionId: typeof payment.providerSubscriptionId === "string" ? payment.providerSubscriptionId : null
+        }));
+        leads = leadRecords.map((lead) => ({
+            id: String(lead.id ?? lead._id),
+            name: String(lead.name ?? "Unknown"),
+            email: String(lead.email ?? "Unknown"),
+            phone: typeof lead.phone === "string" ? lead.phone : null,
+            subject: String(lead.subject ?? "General enquiry"),
+            message: String(lead.message ?? ""),
+            createdAt: String(lead.createdAt ?? ""),
+            status: String(lead.status ?? "new")
         }));
     } catch (error) {
         databaseError = true;
@@ -131,7 +143,7 @@ export default async function AdminPage() {
                 </p>
             </section>
 
-            {!databaseError ? <AdminDataExplorer users={users} scripts={scripts} payments={payments} /> : null}
+            {!databaseError ? <AdminDataExplorer users={users} scripts={scripts} payments={payments} leads={leads} /> : null}
         </main>
     );
 }

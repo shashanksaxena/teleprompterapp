@@ -35,7 +35,7 @@ export function StageSettingsBar({
             step={1}
             value={speed}
             onChange={(event) => onSpeedChange(Number(event.target.value))}
-            className="h-7 min-w-0 flex-1 cursor-pointer accent-white sm:h-36 sm:w-4 sm:flex-none [writing-mode:bt-lr] md:h-44"
+            className="h-7 min-w-0 flex-1 cursor-pointer accent-white sm:h-36 sm:w-4 sm:flex-none [writing-mode:vertical-lr] [direction:rtl] md:h-44"
             aria-label="Scroll speed"
           />
           <span className="w-12 text-right text-[10px] text-white/75 sm:w-auto sm:text-xs">{speed}px/s</span>
@@ -65,8 +65,8 @@ export function StageSettingsBar({
           type="button"
           onClick={onRestart}
           className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-white/8 transition hover:bg-white/12 sm:h-11 sm:w-11"
-          aria-label="Restart teleprompter from top"
-          title="Restart"
+          aria-label="Retake from the beginning"
+          title="Retake"
         >
           <RotateCcw className="h-4 w-4" />
         </button>

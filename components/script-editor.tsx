@@ -1,6 +1,9 @@
 "use client";
 
 import { Eraser, RotateCcw, Save } from "lucide-react";
+import { useState } from "react";
+
+import { DEMO_SCRIPT } from "@/lib/constants";
 
 type ScriptEditorProps = {
   script: string;
@@ -21,8 +24,10 @@ export function ScriptEditor({
   onClearScript,
   onLoadDemoScript
 }: ScriptEditorProps) {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
-    <section className="glass-panel rounded-[16px] p-4">
+    <section className="glass-panel rounded-[16px] p-4" onMouseDown={() => setIsFocused(true)}>
       <div className="mb-3 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <p className="section-kicker">Script workspace</p>
@@ -64,8 +69,10 @@ export function ScriptEditor({
       <textarea
         value={script}
         onChange={(event) => onScriptChange(event.target.value)}
-        placeholder="Type or paste your script here..."
-        className="min-h-[220px] w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface-strong)] p-4 text-base text-[var(--text)] outline-none transition focus:border-[var(--accent)] md:min-h-[260px]"
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        placeholder={isFocused || script ? "" : DEMO_SCRIPT}
+        className="script-editor-input min-h-[220px] w-full rounded-[10px] border border-black bg-black p-4 text-base leading-7 text-white caret-white outline-none transition placeholder:text-white/55 focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)] md:min-h-[260px]"
       />
     </section>
   );

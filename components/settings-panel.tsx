@@ -18,12 +18,12 @@ export function SettingsPanel({
   embedded = false
 }: SettingsPanelProps) {
   return (
-    <section className={embedded ? "min-w-0 overflow-hidden rounded-[14px] border border-[var(--border)] bg-[var(--surface-strong)] p-3 md:p-4" : "glass-panel min-w-0 overflow-hidden rounded-[16px] p-3 md:p-4"}>
-      <div className="mb-3 flex items-center justify-between gap-3">
+    <section className={embedded ? "min-w-0 overflow-hidden rounded-[14px] border border-[var(--border)] bg-[var(--surface-strong)] p-2" : "glass-panel min-w-0 overflow-hidden rounded-[16px] p-3 md:p-4"}>
+      <div className="mb-2 flex items-center justify-between gap-3">
         <h2 className="section-kicker">Prompt controls</h2>
       </div>
 
-      <div className="grid min-w-0 grid-cols-2 gap-3 xl:grid-cols-[minmax(120px,1fr)_minmax(120px,1fr)_auto_auto_auto] xl:items-end">
+      <div className="grid min-w-0 grid-cols-2 gap-2 xl:grid-cols-[minmax(120px,1fr)_minmax(120px,1fr)_auto_auto_auto] xl:items-end">
         <label className="col-span-2 block min-w-0 xl:col-span-1">
           <div className="mb-2 flex items-center justify-between text-sm">
             <span>Speed</span>

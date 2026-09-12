@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Camera, Circle, Download, Music2, Video } from "lucide-react";
+import { Camera, Circle, Download, Music2, Play, Video } from "lucide-react";
 
 import { formatDuration } from "@/lib/utils";
 
@@ -29,6 +29,16 @@ export function RecordingPanel({
   onDownloadAudio
 }: RecordingPanelProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  const previewTake = () => {
+    const video = videoRef.current;
+    if (!video) {
+      return;
+    }
+
+    video.currentTime = 0;
+    void video.play();
+  };
 
   useEffect(() => {
     const node = videoRef.current;
@@ -65,9 +75,11 @@ export function RecordingPanel({
         ) : recordingUrl ? (
           <video
             key={recordingUrl}
+            ref={videoRef}
             src={recordingUrl}
             controls
             controlsList="nodownload noplaybackrate noremoteplayback"
+            onContextMenu={(event) => event.preventDefault()}
             disablePictureInPicture
             disableRemotePlayback
             playsInline
@@ -114,10 +126,20 @@ export function RecordingPanel({
           <div className="text-sm text-[var(--text-soft)]">Duration {formatDuration(recordingDurationSeconds)}</div>
         ) : null}
 
+        {recordingUrl ? (
+          <button
+            type="button"
+            onClick={previewTake}
+            className="inline-flex items-center gap-2 rounded-xl border border-[var(--accent)] bg-[var(--accent-soft)] px-4 py-2 text-sm font-semibold text-[var(--accent)] transition hover:bg-[var(--accent)] hover:text-[var(--accent-contrast)]"
+          >
+            <Play className="h-4 w-4 fill-current" />
+            Preview take
+          </button>
+        ) : null}
         <button
           type="button"
           onClick={onDownload}
-          className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-[var(--accent-contrast)] disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-[var(--accent-contrast)] shadow-[0_10px_24px_rgba(59,130,246,0.28)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
           disabled={!recordingUrl}
         >
           <Download className="h-4 w-4" />
